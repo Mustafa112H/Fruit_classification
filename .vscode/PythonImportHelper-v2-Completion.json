@@ -1,0 +1,338 @@
+[
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "cv2",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "cv2",
+        "description": "cv2",
+        "detail": "cv2",
+        "documentation": {}
+    },
+    {
+        "label": "numpy",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "numpy",
+        "description": "numpy",
+        "detail": "numpy",
+        "documentation": {}
+    },
+    {
+        "label": "streamlit",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "streamlit",
+        "description": "streamlit",
+        "detail": "streamlit",
+        "documentation": {}
+    },
+    {
+        "label": "shuffle",
+        "importPath": "random",
+        "description": "random",
+        "isExtraImport": true,
+        "detail": "random",
+        "documentation": {}
+    },
+    {
+        "label": "StratifiedShuffleSplit",
+        "importPath": "sklearn.model_selection",
+        "description": "sklearn.model_selection",
+        "isExtraImport": true,
+        "detail": "sklearn.model_selection",
+        "documentation": {}
+    },
+    {
+        "label": "DecisionTreeClassifier",
+        "importPath": "sklearn.tree",
+        "description": "sklearn.tree",
+        "isExtraImport": true,
+        "detail": "sklearn.tree",
+        "documentation": {}
+    },
+    {
+        "label": "export_graphviz",
+        "importPath": "sklearn.tree",
+        "description": "sklearn.tree",
+        "isExtraImport": true,
+        "detail": "sklearn.tree",
+        "documentation": {}
+    },
+    {
+        "label": "GaussianNB",
+        "importPath": "sklearn.naive_bayes",
+        "description": "sklearn.naive_bayes",
+        "isExtraImport": true,
+        "detail": "sklearn.naive_bayes",
+        "documentation": {}
+    },
+    {
+        "label": "MLPClassifier",
+        "importPath": "sklearn.neural_network",
+        "description": "sklearn.neural_network",
+        "isExtraImport": true,
+        "detail": "sklearn.neural_network",
+        "documentation": {}
+    },
+    {
+        "label": "StandardScaler",
+        "importPath": "sklearn.preprocessing",
+        "description": "sklearn.preprocessing",
+        "isExtraImport": true,
+        "detail": "sklearn.preprocessing",
+        "documentation": {}
+    },
+    {
+        "label": "accuracy_score",
+        "importPath": "sklearn.metrics",
+        "description": "sklearn.metrics",
+        "isExtraImport": true,
+        "detail": "sklearn.metrics",
+        "documentation": {}
+    },
+    {
+        "label": "classification_report",
+        "importPath": "sklearn.metrics",
+        "description": "sklearn.metrics",
+        "isExtraImport": true,
+        "detail": "sklearn.metrics",
+        "documentation": {}
+    },
+    {
+        "label": "confusion_matrix",
+        "importPath": "sklearn.metrics",
+        "description": "sklearn.metrics",
+        "isExtraImport": true,
+        "detail": "sklearn.metrics",
+        "documentation": {}
+    },
+    {
+        "label": "matplotlib.pyplot",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "matplotlib.pyplot",
+        "description": "matplotlib.pyplot",
+        "detail": "matplotlib.pyplot",
+        "documentation": {}
+    },
+    {
+        "label": "seaborn",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "seaborn",
+        "description": "seaborn",
+        "detail": "seaborn",
+        "documentation": {}
+    },
+    {
+        "label": "graphviz",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "graphviz",
+        "description": "graphviz",
+        "detail": "graphviz",
+        "documentation": {}
+    },
+    {
+        "label": "VGG16",
+        "importPath": "tensorflow.keras.applications.vgg16",
+        "description": "tensorflow.keras.applications.vgg16",
+        "isExtraImport": true,
+        "detail": "tensorflow.keras.applications.vgg16",
+        "documentation": {}
+    },
+    {
+        "label": "preprocess_input",
+        "importPath": "tensorflow.keras.applications.vgg16",
+        "description": "tensorflow.keras.applications.vgg16",
+        "isExtraImport": true,
+        "detail": "tensorflow.keras.applications.vgg16",
+        "documentation": {}
+    },
+    {
+        "label": "Model",
+        "importPath": "tensorflow.keras.models",
+        "description": "tensorflow.keras.models",
+        "isExtraImport": true,
+        "detail": "tensorflow.keras.models",
+        "documentation": {}
+    },
+    {
+        "label": "pandas",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "pandas",
+        "description": "pandas",
+        "detail": "pandas",
+        "documentation": {}
+    },
+    {
+        "label": "hashlib",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "hashlib",
+        "description": "hashlib",
+        "detail": "hashlib",
+        "documentation": {}
+    },
+    {
+        "label": "Image",
+        "importPath": "PIL",
+        "description": "PIL",
+        "isExtraImport": true,
+        "detail": "PIL",
+        "documentation": {}
+    },
+    {
+        "label": "tqdm",
+        "importPath": "tqdm",
+        "description": "tqdm",
+        "isExtraImport": true,
+        "detail": "tqdm",
+        "documentation": {}
+    },
+    {
+        "label": "preprocess_image_blocked_rgb",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def preprocess_image_blocked_rgb(image, blocks=BLOCKS):\n    image = cv2.resize(image, IMAGE_SIZE)\n    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32) / 255.0\n    white_mask = np.all(image_rgb > 0.9, axis=2)\n    image_rgb[white_mask] = 0.0\n    h_blocks, w_blocks = blocks\n    h_step = IMAGE_SIZE[0] // h_blocks\n    w_step = IMAGE_SIZE[1] // w_blocks\n    features = []\n    for i in range(h_blocks):",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "extract_statistical_features",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def extract_statistical_features(image):\n    image = cv2.resize(image, IMAGE_SIZE)\n    features = []\n    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)\n    features.append(np.mean(gray))\n    features.append(np.std(gray))\n    for i in range(3):\n        channel = image[:, :, i]\n        features.append(np.mean(channel))\n        features.append(np.std(channel))",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "get_cnn_feature_extractor",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def get_cnn_feature_extractor():\n    base_model = VGG16(weights='imagenet', include_top=False, input_shape=(IMAGE_SIZE[0],IMAGE_SIZE[1], 3))\n    model = Model(inputs=base_model.input, outputs=base_model.output)\n    return model\ndef extract_cnn_features(model, image):\n    image = cv2.resize(image,IMAGE_SIZE)\n    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)\n    image = preprocess_input(np.expand_dims(image.astype(np.float32), axis=0))\n    features = model.predict(image, verbose=0)\n    return features.flatten()",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "extract_cnn_features",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def extract_cnn_features(model, image):\n    image = cv2.resize(image,IMAGE_SIZE)\n    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)\n    image = preprocess_input(np.expand_dims(image.astype(np.float32), axis=0))\n    features = model.predict(image, verbose=0)\n    return features.flatten()\n## GET THE DATA BALANCE IT AND SHUFFLE SO WE GET DIFFERENT SPLITS AND CAN GET MORE ACCURATE RESULTS \ndef load_image_paths_and_labels():\n    X_paths, y, paths = [], [], []\n    label_map = {name: idx for idx, name in enumerate(CLASSES)}",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "load_image_paths_and_labels",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def load_image_paths_and_labels():\n    X_paths, y, paths = [], [], []\n    label_map = {name: idx for idx, name in enumerate(CLASSES)}\n    class_files = {}\n    for cls in CLASSES:\n        folder = os.path.join(DATA_DIR, cls)\n        files = [f for f in os.listdir(folder) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]\n        class_files[cls] = sorted(files)\n    min_count = min(len(files) for files in class_files.values())\n    st.markdown(f\"\"\"",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "create_tree_graphviz",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def create_tree_graphviz(model, class_names):\n    feature_names = []\n    for b in range(BLOCKS[0]*BLOCKS[1]):\n        feature_names.extend([f'block_{b}_R', f'block_{b}_G', f'block_{b}_B'])\n    dot_data = export_graphviz(\n        model,\n        out_file=None,\n        feature_names=feature_names,\n        class_names=class_names,\n        filled=True,",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "create_classification_report_table",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def create_classification_report_table(y_true, y_pred, class_names, model_name):\n    report = classification_report(y_true, y_pred, target_names=class_names, output_dict=True)\n    df_data = []\n    for class_name in class_names:\n        if class_name in report:\n            df_data.append({\n                'Class': class_name.title(),\n                'Precision': round(report[class_name]['precision'], 3),\n                'Recall': round(report[class_name]['recall'], 3),\n                'F1-Score': round(report[class_name]['f1-score'], 3),",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "plot_confusion_matrix",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def plot_confusion_matrix(ax, cm, class_names, title):\n    cmap = plt.cm.Blues\n    sns.heatmap(\n        cm,\n        annot=True,\n        fmt=\".2f\",\n        cmap=cmap,\n        cbar=True,\n        xticklabels=class_names,\n        yticklabels=class_names,",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def main():\n    # Header\n    st.markdown(\"\"\"\n    <div class=\"main-header\">\n        <h1>🧠 Advanced ML Classification Suite</h1>\n        <p>Comparative Study of Image Classification Using Decision Tree, Naive Bayes, and CNN+MLP</p>\n    </div>\n    \"\"\", unsafe_allow_html=True)\n    #START AND SAVE SESSION SO WHEN YOU LOOK AT A TREE OR SOMETHING IT DOESNT RESET\n    if 'experiment_completed' not in st.session_state:",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "DATA_DIR",
+        "kind": 5,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "DATA_DIR = \"Data\"\nCLASSES = [\"banana\", \"blueberries\", \"pomegranates\"]\nIMAGE_SIZE = (64, 64)\nBLOCKS = (4, 4)\n# -- THIS IS USED FOR THE DECISION TREE IN ORDER NOT TO OVERFIT AND MAKE THE TREE HUGE --> LARGE TIME\ndef preprocess_image_blocked_rgb(image, blocks=BLOCKS):\n    image = cv2.resize(image, IMAGE_SIZE)\n    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32) / 255.0\n    white_mask = np.all(image_rgb > 0.9, axis=2)\n    image_rgb[white_mask] = 0.0",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "CLASSES",
+        "kind": 5,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "CLASSES = [\"banana\", \"blueberries\", \"pomegranates\"]\nIMAGE_SIZE = (64, 64)\nBLOCKS = (4, 4)\n# -- THIS IS USED FOR THE DECISION TREE IN ORDER NOT TO OVERFIT AND MAKE THE TREE HUGE --> LARGE TIME\ndef preprocess_image_blocked_rgb(image, blocks=BLOCKS):\n    image = cv2.resize(image, IMAGE_SIZE)\n    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32) / 255.0\n    white_mask = np.all(image_rgb > 0.9, axis=2)\n    image_rgb[white_mask] = 0.0\n    h_blocks, w_blocks = blocks",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "IMAGE_SIZE",
+        "kind": 5,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "IMAGE_SIZE = (64, 64)\nBLOCKS = (4, 4)\n# -- THIS IS USED FOR THE DECISION TREE IN ORDER NOT TO OVERFIT AND MAKE THE TREE HUGE --> LARGE TIME\ndef preprocess_image_blocked_rgb(image, blocks=BLOCKS):\n    image = cv2.resize(image, IMAGE_SIZE)\n    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32) / 255.0\n    white_mask = np.all(image_rgb > 0.9, axis=2)\n    image_rgb[white_mask] = 0.0\n    h_blocks, w_blocks = blocks\n    h_step = IMAGE_SIZE[0] // h_blocks",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "BLOCKS",
+        "kind": 5,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "BLOCKS = (4, 4)\n# -- THIS IS USED FOR THE DECISION TREE IN ORDER NOT TO OVERFIT AND MAKE THE TREE HUGE --> LARGE TIME\ndef preprocess_image_blocked_rgb(image, blocks=BLOCKS):\n    image = cv2.resize(image, IMAGE_SIZE)\n    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32) / 255.0\n    white_mask = np.all(image_rgb > 0.9, axis=2)\n    image_rgb[white_mask] = 0.0\n    h_blocks, w_blocks = blocks\n    h_step = IMAGE_SIZE[0] // h_blocks\n    w_step = IMAGE_SIZE[1] // w_blocks",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "dhash",
+        "kind": 2,
+        "importPath": "dup",
+        "description": "dup",
+        "peekOfCode": "def dhash(image, hash_size=8):\n    image = image.convert(\"L\").resize((hash_size + 1, hash_size), Image.Resampling.LANCZOS)\n    diff = []\n    for row in range(hash_size):\n        for col in range(hash_size):\n            pixel_left = image.getpixel((col, row))\n            pixel_right = image.getpixel((col + 1, row))\n            diff.append(pixel_left > pixel_right)\n    decimal_value = 0\n    hex_string = []",
+        "detail": "dup",
+        "documentation": {}
+    },
+    {
+        "label": "remove_duplicate_images",
+        "kind": 2,
+        "importPath": "dup",
+        "description": "dup",
+        "peekOfCode": "def remove_duplicate_images(folder_path):\n    hashes = {}\n    duplicates = []\n    for filename in tqdm(os.listdir(folder_path)):\n        file_path = os.path.join(folder_path, filename)\n        try:\n            with Image.open(file_path) as img:\n                hash_val = dhash(img)\n                if hash_val in hashes:\n                    duplicates.append(file_path)",
+        "detail": "dup",
+        "documentation": {}
+    }
+]
