@@ -23,7 +23,7 @@ def check_password():
     if not st.session_state.password_correct:
         pwd = st.text_input("Enter password:", type="password")
         if st.button("Login"):
-            if pwd == "your_password_here":
+            if pwd == "Heba12":
                 st.session_state.password_correct = True
                 st.experimental_rerun()
             else:

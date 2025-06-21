@@ -205,7 +205,7 @@
         "kind": 2,
         "importPath": "app",
         "description": "app",
-        "peekOfCode": "def check_password():\n    if \"password_correct\" not in st.session_state:\n        st.session_state.password_correct = False\n    if not st.session_state.password_correct:\n        pwd = st.text_input(\"Enter password:\", type=\"password\")\n        if st.button(\"Login\"):\n            if pwd == \"your_password_here\":\n                st.session_state.password_correct = True\n                st.experimental_rerun()\n            else:",
+        "peekOfCode": "def check_password():\n    if \"password_correct\" not in st.session_state:\n        st.session_state.password_correct = False\n    if not st.session_state.password_correct:\n        pwd = st.text_input(\"Enter password:\", type=\"password\")\n        if st.button(\"Login\"):\n            if pwd == \"Heba12\":\n                st.session_state.password_correct = True\n                st.experimental_rerun()\n            else:",
         "detail": "app",
         "documentation": {}
     },
