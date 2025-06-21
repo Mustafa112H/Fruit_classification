@@ -8,3 +8,4 @@ seaborn
 graphviz
 pandas
 protobuf>=3.20.0,<4
+base64

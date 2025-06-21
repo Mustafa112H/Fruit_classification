@@ -15,6 +15,7 @@ import graphviz
 from tensorflow.keras.applications.vgg16 import VGG16, preprocess_input
 from tensorflow.keras.models import Model
 import pandas as pd
+import base64
 USER_CREDENTIALS = {
     "admin": "1234"
 }
@@ -575,6 +576,20 @@ def main():
         st.rerun()
     
     #AUTHORS BOX
+    with open("AiReport.pdf", "rb") as f:
+        base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+
+        pdf_display = f"""
+            <iframe 
+                src="data:application/pdf;base64,{base64_pdf}" 
+                width="100%" 
+                height="700" 
+                type="application/pdf">
+            </iframe>
+        """
+
+        if st.button("📄 View Final Report"):
+            st.markdown(pdf_display, unsafe_allow_html=True)
     st.sidebar.markdown("---")
     st.sidebar.markdown("""
     <div class="authors-box">
