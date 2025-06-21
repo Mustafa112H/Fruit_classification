@@ -576,17 +576,22 @@ def main():
         st.rerun()
     
     #AUTHORS BOX
-    with open("AiReport.pdf", "rb") as f:
-        base64_pdf = base64.b64encode(f.read()).decode('utf-8')
-
-        pdf_display = f"""
-            <iframe 
-                src="data:application/pdf;base64,{base64_pdf}" 
-                width="100%" 
-                height="700" 
-                type="application/pdf">
-            </iframe>
-        """
+    st.markdown("### 📄 Project Report")
+    if st.button("📄 View Final Report"):
+        try:
+            with open("AiReport.pdf", "rb") as f:
+                base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+                pdf_display = f"""
+                    <iframe 
+                        src="data:application/pdf;base64,{base64_pdf}" 
+                        width="100%" 
+                        height="700" 
+                        type="application/pdf">
+                    </iframe>
+                """
+                st.markdown(pdf_display, unsafe_allow_html=True)
+        except FileNotFoundError:
+            st.error("❌ 'AiReport.pdf' not found. Make sure it's in the same directory as app.py.")
 
         if st.button("📄 View Final Report"):
             st.markdown(pdf_display, unsafe_allow_html=True)
