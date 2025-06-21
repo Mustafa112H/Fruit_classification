@@ -201,15 +201,6 @@
         "documentation": {}
     },
     {
-        "label": "check_password",
-        "kind": 2,
-        "importPath": "app",
-        "description": "app",
-        "peekOfCode": "def check_password():\n    if \"password_correct\" not in st.session_state:\n        st.session_state.password_correct = False\n    if not st.session_state.password_correct:\n        pwd = st.text_input(\"Enter password:\", type=\"password\")\n        if st.button(\"Login\"):\n            if pwd == \"Heba12\":\n                st.session_state.password_correct = True\n                st.experimental_rerun()\n            else:",
-        "detail": "app",
-        "documentation": {}
-    },
-    {
         "label": "preprocess_image_blocked_rgb",
         "kind": 2,
         "importPath": "app",
@@ -286,7 +277,7 @@
         "kind": 2,
         "importPath": "app",
         "description": "app",
-        "peekOfCode": "def main():\n    if check_password():\n    # Header\n        st.markdown(\"\"\"\n        <div class=\"main-header\">\n            <h1>🧠 Advanced ML Classification Suite</h1>\n            <p>Comparative Study of Image Classification Using Decision Tree, Naive Bayes, and CNN+MLP</p>\n        </div>\n        \"\"\", unsafe_allow_html=True)\n        #START AND SAVE SESSION SO WHEN YOU LOOK AT A TREE OR SOMETHING IT DOESNT RESET",
+        "peekOfCode": "def main():\n    # Header\n    st.markdown(\"\"\"\n    <div class=\"main-header\">\n        <h1>🧠 Advanced ML Classification Suite</h1>\n        <p>Comparative Study of Image Classification Using Decision Tree, Naive Bayes, and CNN+MLP</p>\n    </div>\n    \"\"\", unsafe_allow_html=True)\n    #START AND SAVE SESSION SO WHEN YOU LOOK AT A TREE OR SOMETHING IT DOESNT RESET\n    if 'experiment_completed' not in st.session_state:",
         "detail": "app",
         "documentation": {}
     },
