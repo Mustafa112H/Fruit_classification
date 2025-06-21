@@ -282,6 +282,24 @@
         "documentation": {}
     },
     {
+        "label": "login",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def login():\n    st.markdown(\"\"\"\n    <style>\n        .login-container {\n            display: flex;\n            flex-direction: column;\n            align-items: center;\n            justify-content: center;\n            margin-top: 100px;\n        }",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "USER_CREDENTIALS",
+        "kind": 5,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "USER_CREDENTIALS = {\n    \"admin\": \"1234\"\n}\n# Page Setting up\nst.set_page_config(\n    page_title=\"Advanced ML Classification Suite\",\n    page_icon=\"🧠\",\n    layout=\"wide\",\n    initial_sidebar_state=\"expanded\"\n)",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
         "label": "DATA_DIR",
         "kind": 5,
         "importPath": "app",

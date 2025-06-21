@@ -15,7 +15,9 @@ import graphviz
 from tensorflow.keras.applications.vgg16 import VGG16, preprocess_input
 from tensorflow.keras.models import Model
 import pandas as pd
-
+USER_CREDENTIALS = {
+    "admin": "1234"
+}
 # Page Setting up
 st.set_page_config(
     page_title="Advanced ML Classification Suite",
@@ -1034,6 +1036,52 @@ def main():
             </p>
         </div>
         """, unsafe_allow_html=True)
+# ---- Simple Login Setup ----
+def login():
+    st.markdown("""
+    <style>
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 100px;
+        }
+        .login-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #3498db, #2ecc71);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stTextInput>div>div>input {
+            padding: 0.75rem;
+            font-size: 1.1rem;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
+    with st.container():
+        st.markdown('<div class="login-container">', unsafe_allow_html=True)
+        st.markdown('<div class="login-title">🔐 Login to Access the Suite</div>', unsafe_allow_html=True)
+
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+        if st.button("Login"):
+            if username in USER_CREDENTIALS and USER_CREDENTIALS[username] == password:
+                st.session_state.logged_in = True
+                st.success("✅ Login successful!")
+                st.rerun()
+            else:
+                st.error("❌ Invalid username or password")
+        st.markdown('</div>', unsafe_allow_html=True)
 
 if __name__ == "__main__":
-    main()
+    if 'logged_in' not in st.session_state:
+        st.session_state.logged_in = False
+
+    if st.session_state.logged_in:
+        main()
+    else:
+        login()
