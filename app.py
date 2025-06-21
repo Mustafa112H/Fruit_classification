@@ -574,27 +574,23 @@ def main():
                 del st.session_state[key]
         st.session_state.previous_params = current_params
         st.rerun()
-    
-    #AUTHORS BOX
-    st.markdown("### 📄 Project Report")
-    if st.button("📄 View Final Report"):
-        try:
-            with open("AiReport.pdf", "rb") as f:
-                base64_pdf = base64.b64encode(f.read()).decode('utf-8')
-                pdf_display = f"""
-                    <iframe 
-                        src="data:application/pdf;base64,{base64_pdf}" 
-                        width="100%" 
-                        height="700" 
-                        type="application/pdf">
-                    </iframe>
-                """
-                st.markdown(pdf_display, unsafe_allow_html=True)
-        except FileNotFoundError:
-            st.error("❌ 'AiReport.pdf' not found. Make sure it's in the same directory as app.py.")
 
-        if st.button("📄 View Final Report"):
-            st.markdown(pdf_display, unsafe_allow_html=True)
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("### 📄 Project Report")
+
+    try:
+        with open("AiReport.pdf", "rb") as f:
+            pdf_data = f.read()
+            st.sidebar.download_button(
+                label="📥 Download Final Report",
+                data=pdf_data,
+                file_name="AiReport.pdf",
+                mime="application/pdf"
+            )
+    except FileNotFoundError:
+        st.sidebar.error("❌ 'AiReport.pdf' not found.")
+            
+    # Authors Box
     st.sidebar.markdown("---")
     st.sidebar.markdown("""
     <div class="authors-box">
