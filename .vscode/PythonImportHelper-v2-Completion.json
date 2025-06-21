@@ -143,30 +143,6 @@
         "documentation": {}
     },
     {
-        "label": "VGG16",
-        "importPath": "tensorflow.keras.applications.vgg16",
-        "description": "tensorflow.keras.applications.vgg16",
-        "isExtraImport": true,
-        "detail": "tensorflow.keras.applications.vgg16",
-        "documentation": {}
-    },
-    {
-        "label": "preprocess_input",
-        "importPath": "tensorflow.keras.applications.vgg16",
-        "description": "tensorflow.keras.applications.vgg16",
-        "isExtraImport": true,
-        "detail": "tensorflow.keras.applications.vgg16",
-        "documentation": {}
-    },
-    {
-        "label": "Model",
-        "importPath": "tensorflow.keras.models",
-        "description": "tensorflow.keras.models",
-        "isExtraImport": true,
-        "detail": "tensorflow.keras.models",
-        "documentation": {}
-    },
-    {
         "label": "pandas",
         "kind": 6,
         "isExtraImport": true,
