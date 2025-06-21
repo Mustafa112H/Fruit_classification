@@ -15,11 +15,12 @@ import graphviz
 from tensorflow.keras.applications.vgg16 import VGG16, preprocess_input
 from tensorflow.keras.models import Model
 import pandas as pd
-import base64
+
 USER_CREDENTIALS = {
     "admin": "1234"
 }
-# Page Setting up
+
+#PAGE SET UP 
 st.set_page_config(
     page_title="Advanced ML Classification Suite",
     page_icon="🧠",
@@ -27,7 +28,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# CSS To make webapage look good
+#CSS
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
@@ -40,7 +41,6 @@ st.markdown("""
         background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     }
     
-    /* Header Styling */
     .main-header {
         background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
         padding: 2.5rem;
@@ -68,7 +68,6 @@ st.markdown("""
         font-weight: 400;
     }
     
-    /* Authors Box - Updated to match theme */
     .authors-box {
         background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
         padding: 1.5rem;
@@ -101,7 +100,6 @@ st.markdown("""
         opacity: 0.95;
     }
     
-    /* Model Cards */
     .model-card {
         background: white;
         padding: 2rem;
@@ -141,7 +139,6 @@ st.markdown("""
         border-left-color: #e74c3c;
     }
     
-    /* Metrics Cards */
     .metric-card {
         background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         padding: 1.5rem;
@@ -172,7 +169,6 @@ st.markdown("""
         letter-spacing: 1px;
     }
     
-    /* Run Results */
     .run-results {
         background: white;
         padding: 1.5rem;
@@ -218,7 +214,6 @@ st.markdown("""
         font-weight: 500;
     }
     
-    /* Decision Tree Container */
     .tree-container {
         background: white;
         padding: 2rem;
@@ -228,12 +223,10 @@ st.markdown("""
         border: 1px solid #ecf0f1;
     }
     
-    /* Progress Styling */
     .stProgress > div > div > div > div {
         background: linear-gradient(90deg, #3498db, #2ecc71);
     }
     
-    /* Button Styling */
     .stButton > button {
         background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
         color: white;
@@ -251,7 +244,6 @@ st.markdown("""
         box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
     }
     
-    /* Status Messages */
     .status-success {
         background: linear-gradient(135deg, #d4edda, #c3e6cb);
         color: #155724;
@@ -270,7 +262,6 @@ st.markdown("""
         margin: 1rem 0;
     }
     
-    /* Section Headers */
     .section-header {
         font-size: 1.8rem;
         font-weight: 700;
@@ -280,19 +271,33 @@ st.markdown("""
         border-bottom: 3px solid #3498db;
         display: inline-block;
     }
+    
+    .prediction-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin: 1rem 0;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        border-left: 4px solid #2ecc71;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-#-- WHERE TO GET THE DATA FROM AND FROM WHAT FOLDERS TO CHOOSE (YOU CAN CHANGE THIS :))
+#FOLDERS FOR THE DATA
 DATA_DIR = "Data"
 CLASSES = ["banana", "blueberries", "pomegranates"]
 IMAGE_SIZE = (64, 64)
 BLOCKS = (4, 4)
-
-# -- THIS IS USED FOR THE DECISION TREE IN ORDER NOT TO OVERFIT AND MAKE THE TREE HUGE --> LARGE TIME
+## FOR DT GET DATA READY
 def preprocess_image_blocked_rgb(image, blocks=BLOCKS):
-    image = cv2.resize(image, IMAGE_SIZE)
-    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32) / 255.0
+    """Extract blocked RGB features for Decision Tree"""
+    if len(image.shape) == 3 and image.shape[2] == 3:
+        image = cv2.resize(image, IMAGE_SIZE)
+        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32) / 255.0
+    else:
+        image = cv2.resize(image, IMAGE_SIZE)
+        image_rgb = image.astype(np.float32) / 255.0
+    
     white_mask = np.all(image_rgb > 0.9, axis=2)
     image_rgb[white_mask] = 0.0
     h_blocks, w_blocks = blocks
@@ -305,39 +310,87 @@ def preprocess_image_blocked_rgb(image, blocks=BLOCKS):
             mean_vals = block.mean(axis=(0, 1))
             features.extend(mean_vals)
     return (np.array(features) * 255).astype(np.uint8)
-## THIS GETS THE DATAS MEAN AND MORE SO FOR THE NB
+## GET DATA READY FOR NB
 def extract_statistical_features(image):
-    image = cv2.resize(image, IMAGE_SIZE)
+    """Extract statistical features for Naive Bayes"""
+    if len(image.shape) == 3 and image.shape[2] == 3:
+        image = cv2.resize(image, IMAGE_SIZE)
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    else:
+        image = cv2.resize(image, IMAGE_SIZE)
+        gray = image
+    
     features = []
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     features.append(np.mean(gray))
     features.append(np.std(gray))
-    for i in range(3):
-        channel = image[:, :, i]
-        features.append(np.mean(channel))
-        features.append(np.std(channel))
+    
+    if len(image.shape) == 3:
+        for i in range(3):
+            channel = image[:, :, i]
+            features.append(np.mean(channel))
+            features.append(np.std(channel))
+    else:
+        for i in range(3):
+            features.append(np.mean(gray))
+            features.append(np.std(gray))
+    
     return np.array(features)
-### DEEP FEATURES FOR MLP 
-def get_cnn_feature_extractor():
-    base_model = VGG16(weights='imagenet', include_top=False, input_shape=(IMAGE_SIZE[0],IMAGE_SIZE[1], 3))
-    model = Model(inputs=base_model.input, outputs=base_model.output)
-    return model
-
+##FOR MLP WE USE CNN FEATURE EXTRACT
 def extract_cnn_features(model, image):
-    image = cv2.resize(image,IMAGE_SIZE)
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    image = cv2.resize(image, IMAGE_SIZE)
+    if len(image.shape) == 3 and image.shape[2] == 3:
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    
     image = preprocess_input(np.expand_dims(image.astype(np.float32), axis=0))
     features = model.predict(image, verbose=0)
     return features.flatten()
-## GET THE DATA BALANCE IT AND SHUFFLE SO WE GET DIFFERENT SPLITS AND CAN GET MORE ACCURATE RESULTS 
+##CNN CACHE
+@st.cache_resource
+def get_cnn_feature_extractor():
+    """Get CNN feature extractor (cached)"""
+    base_model = VGG16(weights='imagenet', include_top=False, input_shape=(IMAGE_SIZE[0], IMAGE_SIZE[1], 3))
+    model = Model(inputs=base_model.input, outputs=base_model.output)
+    return model
+## FOR UPLOADED PHOTOS
+def process_uploaded_image_for_prediction(uploaded_file, cnn_model=None):
+    """Process uploaded image and extract all required features"""
+    # Reset file pointer to beginning
+    uploaded_file.seek(0)
+    file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
+    img_bgr = cv2.imdecode(file_bytes, 1)
+    
+    # Ensure we have a valid image
+    if img_bgr is None:
+        st.error("❌ Could not decode image. Please try a different image.")
+        return None, None
+        
+    img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
+    
+    features = {}
+    features['dt'] = preprocess_image_blocked_rgb(img_bgr)  # Use BGR for consistency
+    features['nb'] = extract_statistical_features(img_bgr)  # Use BGR for consistency
+    
+    if cnn_model is not None:
+        features['cnn'] = extract_cnn_features(cnn_model, img_bgr)  # Use BGR for consistency
+    
+    return img_rgb, features
+## LOADS THE DATASET FOR TEST AND TRAIN 
 def load_image_paths_and_labels():
+    """Load and balance dataset"""
     X_paths, y, paths = [], [], []
     label_map = {name: idx for idx, name in enumerate(CLASSES)}
+
+    
     class_files = {}
+    
     for cls in CLASSES:
         folder = os.path.join(DATA_DIR, cls)
+        if not os.path.exists(folder):
+            st.error(f"❌ Data folder '{folder}' not found!")
+            return [], np.array([]), {}
         files = [f for f in os.listdir(folder) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
         class_files[cls] = sorted(files)
+    
     min_count = min(len(files) for files in class_files.values())
     
     st.markdown(f"""
@@ -356,11 +409,12 @@ def load_image_paths_and_labels():
             img_path = os.path.join(folder, fname)
             y.append(label_map[cls])
             paths.append(img_path)
+    
     combined = list(zip(paths, y))
     shuffle(combined)
     paths, y = zip(*combined)
     return list(paths), np.array(y), label_map
-## USED TO PLOT THE DECISON TREE
+#MAKE DT VIS
 def create_tree_graphviz(model, class_names):
     feature_names = []
     for b in range(BLOCKS[0]*BLOCKS[1]):
@@ -399,20 +453,10 @@ def create_tree_graphviz(model, class_names):
         dot_data = dot_data.replace(f'class = "{cname}"', f'class = "{cname} {emoji}"')
         dot_data = dot_data.replace(f"class = {cname}", f"class = {cname} {emoji}")
 
-    # Enhanced node styling with better colors
-    # Internal nodes - decision nodes
-    dot_data = dot_data.replace('fillcolor="#e58139"', 'fillcolor="#3498db", fontcolor="white"')
-    dot_data = dot_data.replace('fillcolor="#39e581"', 'fillcolor="#2ecc71", fontcolor="white"') 
-    dot_data = dot_data.replace('fillcolor="#8139e5"', 'fillcolor="#9b59b6", fontcolor="white"')
-    
-    # Leaf nodes - class predictions with fruit-specific colors
-    dot_data = dot_data.replace('fillcolor="#e5d439"', 'fillcolor="#f1c40f", fontcolor="black"')  # Banana - yellow
-    dot_data = dot_data.replace('fillcolor="#399de5"', 'fillcolor="#3498db", fontcolor="white"')  # Blueberries - blue
-    dot_data = dot_data.replace('fillcolor="#e53981"', 'fillcolor="#e74c3c", fontcolor="white"')  # Pomegranates - red
-
     return graphviz.Source(dot_data)
-## THIS IS FOR THE REPORTS LIKE RECALL PRECISISON F1 
+## MAKES THE REPORTS
 def create_classification_report_table(y_true, y_pred, class_names, model_name):
+    """Create classification report as DataFrame"""
     report = classification_report(y_true, y_pred, target_names=class_names, output_dict=True)
     
     df_data = []
@@ -426,7 +470,6 @@ def create_classification_report_table(y_true, y_pred, class_names, model_name):
                 'Support': int(report[class_name]['support'])
             })
     
-
     for avg_type in ['macro avg', 'weighted avg']:
         if avg_type in report:
             df_data.append({
@@ -439,8 +482,9 @@ def create_classification_report_table(y_true, y_pred, class_names, model_name):
     
     df = pd.DataFrame(df_data)
     return df
-## USED TO PLOT THE CONFUSION MATRIX
+#CONFUSION MATRIX
 def plot_confusion_matrix(ax, cm, class_names, title):
+    """Plot confusion matrix"""
     cmap = plt.cm.Blues
     sns.heatmap(
         cm,
@@ -465,12 +509,27 @@ def plot_confusion_matrix(ax, cm, class_names, title):
         val = float(text.get_text())
         threshold = cm.max() / 2.
         text.set_color("white" if val > threshold else "black")
-
+##SINGLE IMG PRED
+def predict_single_image(image_features, models, scalers, class_names):
+    """Make predictions on a single image using all trained models"""
+    predictions = {}
     
-   
-
-
-## THIS IS THE MAIN WEBPAGE
+    if 'dt_model' in models and models['dt_model'] is not None:
+        dt_pred = models['dt_model'].predict(image_features['dt'].reshape(1, -1))[0]
+        predictions['Decision Tree'] = class_names[dt_pred]
+    
+    if 'nb_model' in models and models['nb_model'] is not None:
+        nb_feat_scaled = scalers['nb'].transform(image_features['nb'].reshape(1, -1))
+        nb_pred = models['nb_model'].predict(nb_feat_scaled)[0]
+        predictions['Naive Bayes'] = class_names[nb_pred]
+    
+    if 'mlp_model' in models and models['mlp_model'] is not None:
+        cnn_feat_scaled = scalers['cnn'].transform(image_features['cnn'].reshape(1, -1))
+        mlp_pred = models['mlp_model'].predict(cnn_feat_scaled)[0]
+        predictions['CNN + MLP'] = class_names[mlp_pred]
+    
+    return predictions
+##MAIN WEB 
 def main():
     # Header
     st.markdown("""
@@ -480,33 +539,26 @@ def main():
     </div>
     """, unsafe_allow_html=True)
     
-    #START AND SAVE SESSION SO WHEN YOU LOOK AT A TREE OR SOMETHING IT DOESNT RESET
+    #SESSION BEGIN 
     if 'experiment_completed' not in st.session_state:
         st.session_state.experiment_completed = False
     if 'results' not in st.session_state:
         st.session_state.results = {}
+    if 'trained_models' not in st.session_state:
+        st.session_state.trained_models = {}
+    if 'trained_scalers' not in st.session_state:
+        st.session_state.trained_scalers = {}
     if 'dt_models' not in st.session_state:
         st.session_state.dt_models = []
-    if 'last_predictions' not in st.session_state:
-        st.session_state.last_predictions = {}
-    if 'last_misclassified' not in st.session_state:
-        st.session_state.last_misclassified = []
     if 'class_names' not in st.session_state:
         st.session_state.class_names = []
-    if 'model_names' not in st.session_state:
-        st.session_state.model_names = []
-    if 'avg_accuracies' not in st.session_state:
-        st.session_state.avg_accuracies = []
-    if 'N_RUNS' not in st.session_state:
-        st.session_state.N_RUNS = 5
-    if 'all_misclassified' not in st.session_state:
-        st.session_state.all_misclassified = {}
+    if 'cnn_model' not in st.session_state:
+        st.session_state.cnn_model = None
     
-    #------ SIDEBAR ---------------
+    #SIDEBAR
     st.sidebar.markdown("## ⚙️ Configuration Panel")
     st.sidebar.markdown("---")
     
-    #CHOOSE WHAT TO RUN 
     st.sidebar.markdown("### 🤖 Select Models to Run")
     run_decision_tree = st.sidebar.checkbox("🌳 Decision Tree", value=True)
     run_naive_bayes = st.sidebar.checkbox("⚡ Naive Bayes", value=True)
@@ -516,65 +568,21 @@ def main():
         st.sidebar.error("⚠️ Please select at least one model to run!")
         return
     
-    #PICK NUM OF RUNS
     st.sidebar.markdown("### 🔄 Cross-Validation Settings")
     N_RUNS = st.sidebar.slider("Number of Runs", min_value=1, max_value=10, value=5, step=1)
     test_size = st.sidebar.slider("Test Size", min_value=0.1, max_value=0.4, value=0.2, step=0.05)
     
-    ##MORE SETTINGS ALREADY TUNED DONT PLAY WITH THEM UNLESS YOU WANT TO LEARN 
     st.sidebar.markdown("### 🔧 Advanced Settings")
     random_state = st.sidebar.number_input("Random State", min_value=1, max_value=100, value=42)
-
-
-    #PRUNING OF TREE
-    st.sidebar.markdown("#### 🌳 Decision Tree Pruning")
-    max_depth = st.sidebar.slider("Max Depth", min_value=2, max_value=20, value=10, step=1,
-                        help="Maximum depth of the tree")
-    min_samples_split = st.sidebar.slider("Min Samples Split", min_value=0, max_value=50, value=10, step=10, 
-                                    help="Minimum samples required to split an internal node")
-    min_samples_leaf = st.sidebar.slider("Min Samples Leaf", min_value=0, max_value=20, value=5, step=5,
-                                   help="Minimum samples required to be at a leaf node")
-    min_impurity_decrease = st.sidebar.slider("Min Impurity Decrease", min_value=0.01, max_value=0.1, value=0.01, step=0.01,
-                                        help="Split only if it decreases impurity by this amount")
-
-    # ]
-
-    #INFORMATION ON THE PRUNING
-    st.sidebar.markdown("""
-        <div style="background: #e3f2fd; padding: 1rem; border-radius: 8px; margin: 1rem 0; font-size: 0.8rem;">
-        <strong>🔍 Pruning for Dataset (249 per class):</strong><br>
-        • <strong>Max Depth (10):</strong>to be safe however other factors should make it converge before then<br>
-        • <strong>Min Samples Split (10):</strong> Prevents splitting small nodes<br>
-        • <strong>Min Samples Leaf (5):</strong> Each leaf must have ≥5 samples<br>
-        • <strong>Min Impurity Decrease (0.01):</strong> Split must improve purity by ≥1%<br>
-        
-        """, unsafe_allow_html=True)
     
-    # Check if sidebar parameters changed and reset if needed
-    current_params = {
-        'run_decision_tree': run_decision_tree,
-        'run_naive_bayes': run_naive_bayes, 
-        'run_cnn_mlp': run_cnn_mlp,
-        'N_RUNS': N_RUNS,
-        'test_size': test_size,
-        'random_state': random_state,
-        'max_depth': max_depth,
-        'min_samples_split': min_samples_split,
-        'min_samples_leaf': min_samples_leaf,
-        'min_impurity_decrease': min_impurity_decrease
-    }
-
-    if 'previous_params' not in st.session_state:
-        st.session_state.previous_params = current_params
-    elif st.session_state.previous_params != current_params:
-        #IF SOMETHING CHANGED ON SIDEBAR RESET THE SETTINGS
-        for key in ['experiment_completed', 'results', 'dt_models', 'last_predictions', 
-                   'last_misclassified', 'all_misclassified', 'class_names', 'model_names', 'avg_accuracies', 'N_RUNS']:
-            if key in st.session_state:
-                del st.session_state[key]
-        st.session_state.previous_params = current_params
-        st.rerun()
-
+    #PRUNING OFDT 
+    st.sidebar.markdown("#### 🌳 Decision Tree Pruning")
+    max_depth = st.sidebar.slider("Max Depth", min_value=2, max_value=20, value=10, step=1)
+    min_samples_split = st.sidebar.slider("Min Samples Split", min_value=2, max_value=50, value=10, step=2)
+    min_samples_leaf = st.sidebar.slider("Min Samples Leaf", min_value=1, max_value=20, value=5, step=1)
+    min_impurity_decrease = st.sidebar.slider("Min Impurity Decrease", min_value=0.0, max_value=0.1, value=0.01, step=0.01)
+    
+        ##OUR REPORT
     st.sidebar.markdown("---")
     st.sidebar.markdown("### 📄 Project Report")
 
@@ -589,7 +597,7 @@ def main():
             )
     except FileNotFoundError:
         st.sidebar.error("❌ 'AiReport.pdf' not found.")
-            
+    
     # Authors Box
     st.sidebar.markdown("---")
     st.sidebar.markdown("""
@@ -599,7 +607,7 @@ def main():
     </div>
     """, unsafe_allow_html=True)
     
-    #JUST UI TO MAKE PAGE LOOK NICE 
+    #JUST ABOUT MODELS JUST UI 
     st.markdown('<div class="section-header">🤖 Model Information</div>', unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns(3)
@@ -661,82 +669,100 @@ def main():
             </div>
             """, unsafe_allow_html=True)
     
-    # Start
-    st.markdown('<div class="section-header">🚀 Run Experiment</div>', unsafe_allow_html=True)
+    #FOR IMG TEST
+    st.markdown('<div class="section-header">📸 Upload Image to Test During Runs</div>', unsafe_allow_html=True)
+    uploaded_image = st.file_uploader("Upload an image (jpg, jpeg, png)", type=["jpg", "jpeg", "png"], key="upload_input")
+    
+    if uploaded_image:
+        if run_cnn_mlp and st.session_state.cnn_model is None:
+            with st.spinner("Loading CNN feature extractor..."):
+                st.session_state.cnn_model = get_cnn_feature_extractor()
+    
+        uploaded_image_copy = uploaded_image
+        img_rgb, upload_features = process_uploaded_image_for_prediction(
+            uploaded_image_copy, 
+            st.session_state.cnn_model if run_cnn_mlp else None
+        )
+    
+        if img_rgb is not None and upload_features is not None:
+            st.image(img_rgb, caption="Uploaded Image for Testing", use_container_width=True)
+            st.session_state.upload_features = upload_features
+            st.session_state.upload_predictions = {'dt': [], 'nb': [], 'mlp': []}
+        
 
-    # RESET
+    
+    #START 
+    st.markdown('<div class="section-header">🚀 Run Experiment</div>', unsafe_allow_html=True)
+    
     col1, col2 = st.columns([3, 1])
     with col1:
         start_experiment = st.button("🎯 Start Classification Experiment", key="start_experiment")
     with col2:
         if st.button("🔄 Reset", key="reset_experiment"):
-            # Clear session state
-            for key in ['experiment_completed', 'results', 'dt_models', 'last_predictions', 
-                       'last_misclassified', 'class_names', 'model_names', 'avg_accuracies', 'N_RUNS']:
+            for key in ['experiment_completed', 'results', 'trained_models', 'trained_scalers', 
+                       'dt_models', 'class_names', 'cnn_model']:
                 if key in st.session_state:
                     del st.session_state[key]
             st.rerun()
-
-    if start_experiment or st.session_state.experiment_completed:
-        if start_experiment:
-            #LOAD DATA AND PREPARE FOR RUNNING
-            st.session_state.N_RUNS = N_RUNS
-            paths, y, label_map = load_image_paths_and_labels()
-            st.session_state.class_names = list(label_map.keys())
+    
+    if start_experiment:
+        #LOAD AND PREPARE
+        paths, y, label_map = load_image_paths_and_labels()
+        if len(paths) == 0:
+            st.error("❌ No data found! Please check your data directory.")
+            return
             
-            #PROGRESS BAR
-            progress_bar = st.progress(0)
-            status_text = st.empty()
-            
-            #EXTRACT FEATURES
-            features_dict = {}
-            
-            if run_decision_tree:
-                status_text.markdown('<div class="status-info">📊 Extracting features for Decision Tree...</div>', unsafe_allow_html=True)
-                dt_features = []
-                for i, p in enumerate(paths):
-                    img = cv2.imread(p)
-                    dt_features.append(preprocess_image_blocked_rgb(img))
-                    progress_bar.progress((i + 1) / len(paths) * 0.3)
-                features_dict['dt'] = np.array(dt_features)
-            
-            if run_naive_bayes:
-                status_text.markdown('<div class="status-info">📊 Extracting features for Naive Bayes...</div>', unsafe_allow_html=True)
-                nb_features = []
-                for i, p in enumerate(paths):
-                    img = cv2.imread(p)
-                    nb_features.append(extract_statistical_features(img))
-                    progress_bar.progress(0.3 + (i + 1) / len(paths) * 0.3)
-                features_dict['nb'] = np.array(nb_features)
-            
-            if run_cnn_mlp:
-                status_text.markdown('<div class="status-info">🧠 Loading CNN feature extractor (VGG16)...</div>', unsafe_allow_html=True)
-                cnn_model = get_cnn_feature_extractor()
-                
-                status_text.markdown('<div class="status-info">🔍 Extracting CNN features...</div>', unsafe_allow_html=True)
-                cnn_features = []
-                for i, p in enumerate(paths):
-                    img = cv2.imread(p)
-                    cnn_features.append(extract_cnn_features(cnn_model, img))
-                    progress_bar.progress(0.6 + (i + 1) / len(paths) * 0.4)
-                
-                features_dict['cnn'] = np.array(cnn_features)
-            
-            #HERE THIS WILL SCALE FEATURES 
-            if run_naive_bayes:
-                scaler_nb = StandardScaler()
-                features_dict['nb_scaled'] = scaler_nb.fit_transform(features_dict['nb'])
+        st.session_state.class_names = list(label_map.keys())
         
-            if run_cnn_mlp:
-                scaler_cnn = StandardScaler()
-                features_dict['cnn_scaled'] = scaler_cnn.fit_transform(features_dict['cnn'])
+        #TRACK PROG
+        progress_bar = st.progress(0)
+        status_text = st.empty()
+        
+        #EXTRACTED FEATURE HERE
+        features_dict = {}
+        total_images = len(paths)
+        
+        if run_decision_tree:
+            status_text.markdown('<div class="status-info">📊 Extracting features for Decision Tree...</div>', unsafe_allow_html=True)
+            dt_features = []
+            for i, p in enumerate(paths):
+                img = cv2.imread(p)
+                if img is not None:
+                    dt_features.append(preprocess_image_blocked_rgb(img))
+                progress_bar.progress((i + 1) / total_images * 0.3)
+            features_dict['dt'] = np.array(dt_features)
+        
+        if run_naive_bayes:
+            status_text.markdown('<div class="status-info">📊 Extracting features for Naive Bayes...</div>', unsafe_allow_html=True)
+            nb_features = []
+            for i, p in enumerate(paths):
+                img = cv2.imread(p)
+                if img is not None:
+                    nb_features.append(extract_statistical_features(img))
+                progress_bar.progress(0.3 + (i + 1) / total_images * 0.3)
+            features_dict['nb'] = np.array(nb_features)
+        
+        if run_cnn_mlp:
+            status_text.markdown('<div class="status-info">🧠 Loading CNN feature extractor (VGG16)...</div>', unsafe_allow_html=True)
+            if st.session_state.cnn_model is None:
+                st.session_state.cnn_model = get_cnn_feature_extractor()
+            
+            status_text.markdown('<div class="status-info">🔍 Extracting CNN features...</div>', unsafe_allow_html=True)
+            cnn_features = []
+            for i, p in enumerate(paths):
+                img = cv2.imread(p)
+                if img is not None:
+                    cnn_features.append(extract_cnn_features(st.session_state.cnn_model, img))
+                progress_bar.progress(0.6 + (i + 1) / total_images * 0.4)
+            features_dict['cnn'] = np.array(cnn_features)
         
         progress_bar.progress(1.0)
         status_text.markdown('<div class="status-success">✅ Feature extraction completed!</div>', unsafe_allow_html=True)
         
-        #PUT RESULT IN STORAGE
+        # STORAGE
         st.session_state.results = {}
-        st.session_state.dt_models = []  # Store all decision tree models from each run
+        st.session_state.dt_models = []
+        
         if run_decision_tree:
             st.session_state.results['dt'] = {'accuracies': [], 'conf_matrices': []}
         if run_naive_bayes:
@@ -744,23 +770,17 @@ def main():
         if run_cnn_mlp:
             st.session_state.results['mlp'] = {'accuracies': [], 'conf_matrices': []}
         
-        st.session_state.last_misclassified = []
-        st.session_state.last_predictions = {}
-        
-        #VALIDATION WILL BE HERE
+    
         st.markdown('<div class="section-header">🔄 Cross-Validation Results</div>', unsafe_allow_html=True)
         
         splitter = StratifiedShuffleSplit(n_splits=N_RUNS, test_size=test_size, random_state=random_state)
         run_i = 1
         
-        
         for train_idx, test_idx in splitter.split(list(features_dict.values())[0], y):
             y_train, y_test = y[train_idx], y[test_idx]
-            paths_test = [paths[i] for i in test_idx]
-            
             run_results = []
             
-            #IF YOU VHOOSE DT
+    
             if run_decision_tree:
                 X_train_dt, X_test_dt = features_dict['dt'][train_idx], features_dict['dt'][test_idx]
                 dt_model = DecisionTreeClassifier(
@@ -771,42 +791,73 @@ def main():
                     min_impurity_decrease=min_impurity_decrease
                 )
                 dt_model.fit(X_train_dt, y_train)
-                st.session_state.dt_models.append(dt_model)  # Store the model
+                st.session_state.dt_models.append(dt_model)
                 y_pred_dt = dt_model.predict(X_test_dt)
                 acc_dt = accuracy_score(y_test, y_pred_dt)
                 st.session_state.results['dt']['accuracies'].append(acc_dt)
                 st.session_state.results['dt']['conf_matrices'].append(confusion_matrix(y_test, y_pred_dt))
                 run_results.append(("🌳 Decision Tree", acc_dt, "#3498db"))
+                
+                # Store final model so if we test more 
                 if run_i == N_RUNS:
-                    st.session_state.last_predictions['dt'] = (y_test, y_pred_dt)
+                    st.session_state.trained_models['dt_model'] = dt_model
+                
+                # Predict on uploaded image
+                if uploaded_image and 'upload_features' in st.session_state:
+                    pred = dt_model.predict(st.session_state.upload_features['dt'].reshape(1, -1))[0]
+                    st.session_state.upload_predictions['dt'].append(pred)
             
-            # HERE IS NB
+            # Naive Bayes
             if run_naive_bayes:
-                X_train_nb, X_test_nb = features_dict['nb_scaled'][train_idx], features_dict['nb_scaled'][test_idx]
+                X_train_nb, X_test_nb = features_dict['nb'][train_idx], features_dict['nb'][test_idx]
+                scaler_nb = StandardScaler()
+                X_train_nb_scaled = scaler_nb.fit_transform(X_train_nb)
+                X_test_nb_scaled = scaler_nb.transform(X_test_nb)
+                
                 nb_model = GaussianNB()
-                nb_model.fit(X_train_nb, y_train)
-                y_pred_nb = nb_model.predict(X_test_nb)
+                nb_model.fit(X_train_nb_scaled, y_train)
+                y_pred_nb = nb_model.predict(X_test_nb_scaled)
                 acc_nb = accuracy_score(y_test, y_pred_nb)
                 st.session_state.results['nb']['accuracies'].append(acc_nb)
                 st.session_state.results['nb']['conf_matrices'].append(confusion_matrix(y_test, y_pred_nb))
                 run_results.append(("⚡ Naive Bayes", acc_nb, "#2ecc71"))
+                
                 if run_i == N_RUNS:
-                    st.session_state.last_predictions['nb'] = (y_test, y_pred_nb)
+                    st.session_state.trained_models['nb_model'] = nb_model
+                    st.session_state.trained_scalers['nb'] = scaler_nb
+
+                if uploaded_image and 'upload_features' in st.session_state:
+                    nb_feat_scaled = scaler_nb.transform(st.session_state.upload_features['nb'].reshape(1, -1))
+                    pred = nb_model.predict(nb_feat_scaled)[0]
+                    st.session_state.upload_predictions['nb'].append(pred)
             
-            # MLP with CNN features
+            # CNN + MLP
             if run_cnn_mlp:
-                X_train_cnn, X_test_cnn = features_dict['cnn_scaled'][train_idx], features_dict['cnn_scaled'][test_idx]
+                X_train_cnn, X_test_cnn = features_dict['cnn'][train_idx], features_dict['cnn'][test_idx]
+                scaler_cnn = StandardScaler()
+                X_train_cnn_scaled = scaler_cnn.fit_transform(X_train_cnn)
+                X_test_cnn_scaled = scaler_cnn.transform(X_test_cnn)
+                
                 mlp_model = MLPClassifier(hidden_layer_sizes=(128,), max_iter=500, random_state=random_state)
-                mlp_model.fit(X_train_cnn, y_train)
-                y_pred_mlp = mlp_model.predict(X_test_cnn)
+                mlp_model.fit(X_train_cnn_scaled, y_train)
+                y_pred_mlp = mlp_model.predict(X_test_cnn_scaled)
                 acc_mlp = accuracy_score(y_test, y_pred_mlp)
                 st.session_state.results['mlp']['accuracies'].append(acc_mlp)
                 st.session_state.results['mlp']['conf_matrices'].append(confusion_matrix(y_test, y_pred_mlp))
                 run_results.append(("🧠 CNN+MLP", acc_mlp, "#e74c3c"))
+                
+       
                 if run_i == N_RUNS:
-                    st.session_state.last_predictions['mlp'] = (y_test, y_pred_mlp)
-                    
-            # Display results for this run in a compact format
+                    st.session_state.trained_models['mlp_model'] = mlp_model
+                    st.session_state.trained_scalers['cnn'] = scaler_cnn
+                
+        
+                if uploaded_image and 'upload_features' in st.session_state:
+                    cnn_feat_scaled = scaler_cnn.transform(st.session_state.upload_features['cnn'].reshape(1, -1))
+                    pred = mlp_model.predict(cnn_feat_scaled)[0]
+                    st.session_state.upload_predictions['mlp'].append(pred)
+            
+            #RESULTS
             st.markdown(f"""
             <div class="run-results">
                 <div class="run-title">📊 Run {run_i}</div>
@@ -822,39 +873,46 @@ def main():
                 """, unsafe_allow_html=True)
             
             st.markdown("</div></div>", unsafe_allow_html=True)
-            
             run_i += 1
         
-        #FINAL RESULT
-        st.session_state.model_names = []
-        st.session_state.avg_accuracies = []
-        
-        for model_key, model_data in st.session_state.results.items():
-            avg_acc = np.mean(model_data['accuracies'])
-            st.session_state.avg_accuracies.append(avg_acc)
+        #UPLOADED RES
+        if uploaded_image and any(st.session_state.upload_predictions.values()):
+            st.markdown('<div class="section-header">🔍 Uploaded Image Prediction Summary</div>', unsafe_allow_html=True)
             
-            if model_key == 'dt':
-                model_name = "Decision Tree"
-            elif model_key == 'nb':
-                model_name = "Naive Bayes"
-            else:
-                model_name = "CNN + MLP"
+            prediction_results = []
+            for model_key, preds in st.session_state.upload_predictions.items():
+                if preds:
+                    model_names = {'dt': '🌳 Decision Tree', 'nb': '⚡ Naive Bayes', 'mlp': '🧠 CNN + MLP'}
+                    values, counts = np.unique(preds, return_counts=True)
+                    most_common_idx = np.argmax(counts)
+                    most_common_class = CLASSES[values[most_common_idx]]
+                    confidence = (counts[most_common_idx] / len(preds)) * 100
+                    
+                    prediction_results.append({
+                        "Model": model_names[model_key],
+                        "Most Predicted Class": most_common_class,
+                        "Confidence": f"{confidence:.1f}%",
+                        "All Predictions": ", ".join([CLASSES[p] for p in preds])
+                    })
             
-            st.session_state.model_names.append(model_name)
+            if prediction_results:
+                df_preds = pd.DataFrame(prediction_results)
+                st.dataframe(df_preds, use_container_width=True)
         
-        #DONE 
         st.session_state.experiment_completed = True
     
-    #DISPLAY RESULTS
+    
     if st.session_state.experiment_completed:
         # Results Summary
         st.markdown('<div class="section-header">📈 Final Results Summary</div>', unsafe_allow_html=True)
         
-        # Average accuracies
         cols = st.columns(len(st.session_state.results))
+        model_names = []
+        avg_accuracies = []
         
         for i, (model_key, model_data) in enumerate(st.session_state.results.items()):
             avg_acc = np.mean(model_data['accuracies'])
+            avg_accuracies.append(avg_acc)
             
             with cols[i]:
                 if model_key == 'dt':
@@ -870,6 +928,8 @@ def main():
                     icon = "🧠"
                     color = "#e74c3c"
                 
+                model_names.append(model_name)
+                
                 st.markdown(f"""
                 <div class="metric-card">
                     <div style="font-size: 2rem; margin-bottom: 0.5rem;">{icon}</div>
@@ -878,42 +938,21 @@ def main():
                 </div>
                 """, unsafe_allow_html=True)
         
-        #PUT THE REPORTS AS TABLES 
+        # Classification Reports
         st.markdown('<div class="section-header">📄 Classification Reports</div>', unsafe_allow_html=True)
-
-        for model_key, (y_test, y_pred) in st.session_state.last_predictions.items():
-            if model_key == 'dt':
-                model_name = "🌳 Decision Tree"
-            elif model_key == 'nb':
-                model_name = "⚡ Naive Bayes"
-            else:
-                model_name = "🧠 CNN + MLP"
-            
-            st.markdown(f"#### {model_name}")
-            report_df = create_classification_report_table(y_test, y_pred, st.session_state.class_names, model_name)
-            
-            #STYLING
-            styled_df = report_df.style.format({
-                'Precision': '{:.3f}',
-                'Recall': '{:.3f}',
-                'F1-Score': '{:.3f}',
-                'Support': '{:d}'
-            }).set_table_styles([
-                {'selector': 'thead th', 'props': [('background-color', '#3498db'), ('color', 'white'), ('font-weight', 'bold')]},
-                {'selector': 'tbody tr:nth-child(even)', 'props': [('background-color', '#f8f9fa')]},
-                {'selector': 'tbody tr:hover', 'props': [('background-color', '#e3f2fd')]},
-            ])
-            
-            st.dataframe(styled_df, use_container_width=True, hide_index=True)
         
-        #CONFUSION MATRIX 
+    
+        last_predictions = {}
+        for model_key, model_data in st.session_state.results.items():
+            last_cm = model_data['conf_matrices'][-1]
+            
         st.markdown('<div class="section-header">🎯 Average Confusion Matrices</div>', unsafe_allow_html=True)
-
+        
         fig_cols = len(st.session_state.results)
         fig, axs = plt.subplots(1, fig_cols, figsize=(6 * fig_cols, 5))
         if fig_cols == 1:
             axs = [axs]
-
+        
         plot_idx = 0
         for model_key, model_data in st.session_state.results.items():
             avg_cm = np.mean(model_data['conf_matrices'], axis=0)
@@ -926,19 +965,17 @@ def main():
             
             plot_confusion_matrix(axs[plot_idx], avg_cm, st.session_state.class_names, title)
             plot_idx += 1
-
+        
         plt.tight_layout()
         st.pyplot(fig)
         
-        # DT Visualization
+        # Decision Tree Visualization
         if 'dt' in st.session_state.results and len(st.session_state.dt_models) > 0:
             st.markdown('<div class="section-header">🌳 Decision Tree Visualization</div>', unsafe_allow_html=True)
             
-            #ANG DEPTH 
             all_depths = [model.get_depth() for model in st.session_state.dt_models]
             avg_depth = np.mean(all_depths)
             
-            #STATS
             col1, col2 = st.columns(2)
             with col1:
                 st.markdown(f"""
@@ -956,20 +993,16 @@ def main():
                 </div>
                 """, unsafe_allow_html=True)
             
-            #TREE EXPANDER
+            # Show individual trees
             st.markdown("### 🌳 Individual Decision Trees")
             
             for run_idx, model in enumerate(st.session_state.dt_models):
                 run_number = run_idx + 1
                 tree_depth = model.get_depth()
                 tree_leaves = model.get_n_leaves()
-                
-                #ACC FOR EACH RUN 
                 run_accuracy = st.session_state.results['dt']['accuracies'][run_idx]
                 
                 with st.expander(f"🌳 Decision Tree - Run {run_number} (Depth: {tree_depth}, Accuracy: {run_accuracy:.1%})"):
-                    
-                    # TREE STATS
                     col1, col2 = st.columns(2)
                     with col1:
                         st.markdown(f"""
@@ -987,46 +1020,64 @@ def main():
                         </div>
                         """, unsafe_allow_html=True)
                     
-                    st.markdown("""
-                    <div class="tree-container">
-                    """, unsafe_allow_html=True)
-                    
                     try:
-                        #DSLAY TREE
                         tree_graph = create_tree_graphviz(model, st.session_state.class_names)
                         st.graphviz_chart(tree_graph.source, use_container_width=True)
-                        
-                        # EXPLAN
-                        st.markdown(f"""
-                        <div style="background: #e3f2fd; padding: 1.5rem; border-radius: 12px; margin-top: 1.5rem; border-left: 4px solid #2196f3;">
-                            <h4 style="color: #1976d2; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                                🔍 Decision Tree from Run {run_number}:
-                            </h4>
-                            <div style="color: #424242; line-height: 1.6;">
-                                <p><strong>🔹 Internal Nodes (Blue/Green/Purple):</strong> Show decision rules based on RGB values from image blocks</p>
-                                <p><strong>🍎 Leaf Nodes (Colored):</strong> Final predictions with fruit emojis and class probabilities</p>
-                                <p><strong>🎨 Node Colors:</strong> Represent the dominant class prediction at each node</p>
-                                <p><strong>📊 Values:</strong> Show sample counts and class distributions</p>
-                                <p><strong>🌿 Tree Flow:</strong> Follow paths from root to leaves based on feature thresholds</p>
-                                <p><strong>📈 Performance:</strong> This tree achieved {run_accuracy:.1%} accuracy (Average: {avg_depth:.1f} depth)</p>
-                            </div>
-                        </div>
-                        """, unsafe_allow_html=True)
-                        
                     except Exception as e:
-                        st.error(f"Could not display decision tree visualization: {str(e)}")
-                        st.info("The decision tree was trained successfully, but visualization failed. This might be due to Graphviz installation issues.")
-                    
-                    st.markdown("</div>", unsafe_allow_html=True)
+                        st.error(f"Could not display decision tree: {str(e)}")
         
+        #MORE TEST IMG
+        st.markdown('<div class="section-header">🧪 Test Additional Images</div>', unsafe_allow_html=True)
         
+        additional_test_image = st.file_uploader(
+            "Upload a new test image", 
+            type=["jpg", "jpeg", "png"], 
+            key="additional_test"
+        )
         
-        #BEST MODEL 
+        if additional_test_image is not None:
+            #IMG PROC
+            img_rgb, test_features = process_uploaded_image_for_prediction(
+                additional_test_image, 
+                st.session_state.cnn_model
+            )
+            
+            st.image(img_rgb, caption="Test Image", use_container_width=True)
+            
+            # Make pred
+            predictions = predict_single_image(
+                test_features, 
+                st.session_state.trained_models, 
+                st.session_state.trained_scalers, 
+                st.session_state.class_names
+            )
+            
+            st.markdown("### 🔮 Predictions:")
+            
+            for model_name, prediction in predictions.items():
+                if model_name == "Decision Tree":
+                    icon = "🌳"
+                    color = "#3498db"
+                elif model_name == "Naive Bayes":
+                    icon = "⚡"
+                    color = "#2ecc71"
+                else:
+                    icon = "🧠"
+                    color = "#e74c3c"
+                
+                st.markdown(f"""
+                <div class="prediction-card">
+                    <h4 style="color: {color}; margin-bottom: 0.5rem;">{icon} {model_name}</h4>
+                    <p style="font-size: 1.2rem; font-weight: 600; margin: 0;">Prediction: <span style="color: {color};">{prediction}</span></p>
+                </div>
+                """, unsafe_allow_html=True)
+        
+        # Best Model Summary
         st.markdown('<div class="section-header">🏆 Best Model Summary</div>', unsafe_allow_html=True)
         
-        best_acc = max(st.session_state.avg_accuracies)
-        best_model_idx = st.session_state.avg_accuracies.index(best_acc)
-        best_model_name = st.session_state.model_names[best_model_idx]
+        best_acc = max(avg_accuracies)
+        best_model_idx = avg_accuracies.index(best_acc)
+        best_model_name = model_names[best_model_idx]
         
         if best_model_name == "Decision Tree":
             color = "#3498db"
@@ -1048,12 +1099,13 @@ def main():
                 {best_acc*100:.2f}% Average Accuracy
             </p>
             <p style="color: #7f8c8d; margin-top: 1rem;">
-                This model achieved the highest average accuracy across all {st.session_state.N_RUNS} cross-validation runs.
+                This model achieved the highest average accuracy across all cross-validation runs.
             </p>
         </div>
         """, unsafe_allow_html=True)
-# ---- Simple Login Setup ----
+
 def login():
+    """Simple login interface"""
     st.markdown("""
     <style>
         .login-container {
@@ -1084,6 +1136,7 @@ def login():
 
         username = st.text_input("Username")
         password = st.text_input("Password", type="password")
+        
         if st.button("Login"):
             if username in USER_CREDENTIALS and USER_CREDENTIALS[username] == password:
                 st.session_state.logged_in = True
@@ -1091,6 +1144,7 @@ def login():
                 st.rerun()
             else:
                 st.error("❌ Invalid username or password")
+        
         st.markdown('</div>', unsafe_allow_html=True)
 
 if __name__ == "__main__":
