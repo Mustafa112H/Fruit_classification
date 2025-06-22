@@ -1191,17 +1191,7 @@ def main():
             
             st.markdown("</div></div>", unsafe_allow_html=True)
             run_i += 1
-            if "last_predictions" not in st.session_state:
-                st.session_state.last_predictions = {}
-
-            if run_decision_tree:
-                st.session_state.last_predictions["dt"] = (y_test, y_pred_dt)
-
-            if run_naive_bayes:
-                st.session_state.last_predictions["nb"] = (y_test, y_pred_nb)
-
-            if run_cnn_mlp:
-                st.session_state.last_predictions["mlp"] = (y_test, y_pred_mlp)
+            
         
 
         if uploaded_image and any(st.session_state.upload_predictions.values()):
@@ -1227,7 +1217,6 @@ def main():
                 df_preds = pd.DataFrame(prediction_results)
                 st.dataframe(df_preds, use_container_width=True)
         
-        st.session_state.experiment_completed = True
         st.markdown('<div class="section-header">📄 Classification Reports</div>', unsafe_allow_html=True)
 
         for model_key, (y_test, y_pred) in st.session_state.last_predictions.items():
