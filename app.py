@@ -1052,33 +1052,7 @@ def main():
                 st.dataframe(df_preds, use_container_width=True)
         
         st.session_state.experiment_completed = True
-        st.markdown('<div class="section-header">📄 Classification Reports</div>', unsafe_allow_html=True)
-
-        for model_key, (y_test, y_pred) in st.session_state.last_predictions.items():
-            if model_key == 'dt':
-                model_name = "🌳 Decision Tree"
-            elif model_key == 'nb':
-                model_name = "⚡ Naive Bayes"
-            else:
-                model_name = "🧠 CNN + MLP"
-            
-            st.markdown(f"#### {model_name}")
-            report_df = create_classification_report_table(y_test, y_pred, st.session_state.class_names, model_name)
-            
-            #STYLING
-            styled_df = report_df.style.format({
-                'Precision': '{:.3f}',
-                'Recall': '{:.3f}',
-                'F1-Score': '{:.3f}',
-                'Support': '{:d}'
-            }).set_table_styles([
-                {'selector': 'thead th', 'props': [('background-color', '#3498db'), ('color', 'white'), ('font-weight', 'bold')]},
-                {'selector': 'tbody tr:nth-child(even)', 'props': [('background-color', '#f8f9fa')]},
-                {'selector': 'tbody tr:hover', 'props': [('background-color', '#e3f2fd')]},
-            ])
-            
-            st.dataframe(styled_df, use_container_width=True, hide_index=True)
-        
+    
 
     if st.session_state.experiment_completed:
         st.markdown('<div class="section-header">📈 Final Results Summary</div>', unsafe_allow_html=True)
@@ -1114,7 +1088,172 @@ def main():
                     <div class="metric-label">{model_name}</div>
                 </div>
                 """, unsafe_allow_html=True)
+                splitter = StratifiedShuffleSplit(n_splits=N_RUNS, test_size=test_size, random_state=random_state)
+        run_i = 1
         
+        for train_idx, test_idx in splitter.split(list(features_dict.values())[0], y):
+            y_train, y_test = y[train_idx], y[test_idx]
+            run_results = []
+            
+            # Decision Tree
+            if run_decision_tree:
+                X_train_dt, X_test_dt = features_dict['dt'][train_idx], features_dict['dt'][test_idx]
+                dt_model = DecisionTreeClassifier(
+                    random_state=random_state, 
+                    max_depth=max_depth,
+                    min_samples_split=min_samples_split,
+                    min_samples_leaf=min_samples_leaf,
+                    min_impurity_decrease=min_impurity_decrease
+                )
+                dt_model.fit(X_train_dt, y_train)
+                st.session_state.dt_models.append(dt_model)
+                y_pred_dt = dt_model.predict(X_test_dt)
+                acc_dt = accuracy_score(y_test, y_pred_dt)
+                st.session_state.results['dt']['accuracies'].append(acc_dt)
+                st.session_state.results['dt']['conf_matrices'].append(confusion_matrix(y_test, y_pred_dt))
+                run_results.append(("🌳 Decision Tree", acc_dt, "#3498db"))
+                
+                #STORE FINAL 
+                if run_i == N_RUNS:
+                    st.session_state.trained_models['dt_model'] = dt_model
+                
+                #PREDICT
+                if uploaded_image and 'upload_features' in st.session_state:
+                    pred = dt_model.predict(st.session_state.upload_features['dt'].reshape(1, -1))[0]
+                    st.session_state.upload_predictions['dt'].append(pred)
+            
+            # Naive Bayes
+            if run_naive_bayes:
+                X_train_nb, X_test_nb = features_dict['nb'][train_idx], features_dict['nb'][test_idx]
+                scaler_nb = StandardScaler()
+                X_train_nb_scaled = scaler_nb.fit_transform(X_train_nb)
+                X_test_nb_scaled = scaler_nb.transform(X_test_nb)
+                
+                nb_model = GaussianNB()
+                nb_model.fit(X_train_nb_scaled, y_train)
+                y_pred_nb = nb_model.predict(X_test_nb_scaled)
+                acc_nb = accuracy_score(y_test, y_pred_nb)
+                st.session_state.results['nb']['accuracies'].append(acc_nb)
+                st.session_state.results['nb']['conf_matrices'].append(confusion_matrix(y_test, y_pred_nb))
+                run_results.append(("⚡ Naive Bayes", acc_nb, "#2ecc71"))
+                
+                #STORE FINAL 
+                if run_i == N_RUNS:
+                    st.session_state.trained_models['nb_model'] = nb_model
+                    st.session_state.trained_scalers['nb'] = scaler_nb
+                
+                #PREDICT
+                if uploaded_image and 'upload_features' in st.session_state:
+                    nb_feat_scaled = scaler_nb.transform(st.session_state.upload_features['nb'].reshape(1, -1))
+                    pred = nb_model.predict(nb_feat_scaled)[0]
+                    st.session_state.upload_predictions['nb'].append(pred)
+            
+            # CNN + MLP
+            if run_cnn_mlp:
+                X_train_cnn, X_test_cnn = features_dict['cnn'][train_idx], features_dict['cnn'][test_idx]
+                scaler_cnn = StandardScaler()
+                X_train_cnn_scaled = scaler_cnn.fit_transform(X_train_cnn)
+                X_test_cnn_scaled = scaler_cnn.transform(X_test_cnn)
+                
+                mlp_model = MLPClassifier(hidden_layer_sizes=(128,), max_iter=500, random_state=random_state)
+                mlp_model.fit(X_train_cnn_scaled, y_train)
+                y_pred_mlp = mlp_model.predict(X_test_cnn_scaled)
+                acc_mlp = accuracy_score(y_test, y_pred_mlp)
+                st.session_state.results['mlp']['accuracies'].append(acc_mlp)
+                st.session_state.results['mlp']['conf_matrices'].append(confusion_matrix(y_test, y_pred_mlp))
+                run_results.append(("🧠 CNN+MLP", acc_mlp, "#e74c3c"))
+                
+             
+                if run_i == N_RUNS:
+                    st.session_state.trained_models['mlp_model'] = mlp_model
+                    st.session_state.trained_scalers['cnn'] = scaler_cnn
+                
+    
+                if uploaded_image and 'upload_features' in st.session_state:
+                    cnn_feat_scaled = scaler_cnn.transform(st.session_state.upload_features['cnn'].reshape(1, -1))
+                    pred = mlp_model.predict(cnn_feat_scaled)[0]
+                    st.session_state.upload_predictions['mlp'].append(pred)
+            
+            #DISPLAY RESULTSSSSSS
+            st.markdown(f"""
+            <div class="run-results">
+                <div class="run-title">📊 Run {run_i}</div>
+                <div class="accuracy-grid">
+            """, unsafe_allow_html=True)
+            
+            for model_name, accuracy, color in run_results:
+                st.markdown(f"""
+                    <div class="accuracy-item">
+                        <div class="accuracy-value" style="color: {color};">{accuracy:.1%}</div>
+                        <div class="accuracy-label">{model_name}</div>
+                    </div>
+                """, unsafe_allow_html=True)
+            
+            st.markdown("</div></div>", unsafe_allow_html=True)
+            run_i += 1
+            if "last_predictions" not in st.session_state:
+                st.session_state.last_predictions = {}
+
+            if run_decision_tree:
+                st.session_state.last_predictions["dt"] = (y_test, y_pred_dt)
+
+            if run_naive_bayes:
+                st.session_state.last_predictions["nb"] = (y_test, y_pred_nb)
+
+            if run_cnn_mlp:
+                st.session_state.last_predictions["mlp"] = (y_test, y_pred_mlp)
+        
+
+        if uploaded_image and any(st.session_state.upload_predictions.values()):
+            st.markdown('<div class="section-header">🔍 Uploaded Image Prediction Summary</div>', unsafe_allow_html=True)
+            
+            prediction_results = []
+            for model_key, preds in st.session_state.upload_predictions.items():
+                if preds:
+                    model_names = {'dt': '🌳 Decision Tree', 'nb': '⚡ Naive Bayes', 'mlp': '🧠 CNN + MLP'}
+                    values, counts = np.unique(preds, return_counts=True)
+                    most_common_idx = np.argmax(counts)
+                    most_common_class = CLASSES[values[most_common_idx]]
+                    confidence = (counts[most_common_idx] / len(preds)) * 100
+                    
+                    prediction_results.append({
+                        "Model": model_names[model_key],
+                        "Most Predicted Class": most_common_class,
+                        "Confidence": f"{confidence:.1f}%",
+                        "All Predictions": ", ".join([CLASSES[p] for p in preds])
+                    })
+            
+            if prediction_results:
+                df_preds = pd.DataFrame(prediction_results)
+                st.dataframe(df_preds, use_container_width=True)
+        
+        st.session_state.experiment_completed = True
+        st.markdown('<div class="section-header">📄 Classification Reports</div>', unsafe_allow_html=True)
+
+        for model_key, (y_test, y_pred) in st.session_state.last_predictions.items():
+            if model_key == 'dt':
+                model_name = "🌳 Decision Tree"
+            elif model_key == 'nb':
+                model_name = "⚡ Naive Bayes"
+            else:
+                model_name = "🧠 CNN + MLP"
+            
+            st.markdown(f"#### {model_name}")
+            report_df = create_classification_report_table(y_test, y_pred, st.session_state.class_names, model_name)
+            
+            #STYLING
+            styled_df = report_df.style.format({
+                'Precision': '{:.3f}',
+                'Recall': '{:.3f}',
+                'F1-Score': '{:.3f}',
+                'Support': '{:d}'
+            }).set_table_styles([
+                {'selector': 'thead th', 'props': [('background-color', '#3498db'), ('color', 'white'), ('font-weight', 'bold')]},
+                {'selector': 'tbody tr:nth-child(even)', 'props': [('background-color', '#f8f9fa')]},
+                {'selector': 'tbody tr:hover', 'props': [('background-color', '#e3f2fd')]},
+            ])
+            
+            st.dataframe(styled_df, use_container_width=True, hide_index=True)
 
         st.markdown('<div class="section-header">🎯 Average Confusion Matrices</div>', unsafe_allow_html=True)
         
