@@ -424,7 +424,7 @@
         "kind": 5,
         "importPath": "get_data",
         "description": "get_data",
-        "peekOfCode": "keyword = 'natural blueberries'\nbing_crawler = BingImageCrawler(storage={'root_dir': 'blueberries'})\nbing_crawler.crawl(keyword=keyword, max_num=300, file_idx_offset=1100)\ncrawler2 = GoogleImageCrawler(storage={'root_dir': 'blueberries'})\ncrawler2.crawl(keyword=keyword, max_num=300, file_idx_offset=60)",
+        "peekOfCode": "keyword = 'fresh promagrante'\nbing_crawler = BingImageCrawler(storage={'root_dir': 'pomegranates'})\nbing_crawler.crawl(keyword=keyword, max_num=300, file_idx_offset=1900)\ncrawler2 = GoogleImageCrawler(storage={'root_dir': 'pomegranates'})\ncrawler2.crawl(keyword=keyword, max_num=300, file_idx_offset=900)",
         "detail": "get_data",
         "documentation": {}
     },
@@ -433,7 +433,7 @@
         "kind": 5,
         "importPath": "get_data",
         "description": "get_data",
-        "peekOfCode": "bing_crawler = BingImageCrawler(storage={'root_dir': 'blueberries'})\nbing_crawler.crawl(keyword=keyword, max_num=300, file_idx_offset=1100)\ncrawler2 = GoogleImageCrawler(storage={'root_dir': 'blueberries'})\ncrawler2.crawl(keyword=keyword, max_num=300, file_idx_offset=60)",
+        "peekOfCode": "bing_crawler = BingImageCrawler(storage={'root_dir': 'pomegranates'})\nbing_crawler.crawl(keyword=keyword, max_num=300, file_idx_offset=1900)\ncrawler2 = GoogleImageCrawler(storage={'root_dir': 'pomegranates'})\ncrawler2.crawl(keyword=keyword, max_num=300, file_idx_offset=900)",
         "detail": "get_data",
         "documentation": {}
     },
@@ -442,7 +442,7 @@
         "kind": 5,
         "importPath": "get_data",
         "description": "get_data",
-        "peekOfCode": "crawler2 = GoogleImageCrawler(storage={'root_dir': 'blueberries'})\ncrawler2.crawl(keyword=keyword, max_num=300, file_idx_offset=60)",
+        "peekOfCode": "crawler2 = GoogleImageCrawler(storage={'root_dir': 'pomegranates'})\ncrawler2.crawl(keyword=keyword, max_num=300, file_idx_offset=900)",
         "detail": "get_data",
         "documentation": {}
     },
@@ -492,42 +492,6 @@
         "documentation": {}
     },
     {
-        "label": "folder",
-        "kind": 5,
-        "importPath": "rename",
-        "description": "rename",
-        "peekOfCode": "folder = \"Data/blueberries\"\nimage_extensions = (\".jpg\", \".jpeg\", \".png\", \".webp\")\n# Get image files\nimage_files = sorted([\n    f for f in os.listdir(folder)\n    if f.lower().endswith(image_extensions)\n])\n# 1️⃣ TEMPORARY rename to avoid collisions\nfor i, filename in enumerate(image_files):\n    ext = os.path.splitext(filename)[1].lower()",
-        "detail": "rename",
-        "documentation": {}
-    },
-    {
-        "label": "image_extensions",
-        "kind": 5,
-        "importPath": "rename",
-        "description": "rename",
-        "peekOfCode": "image_extensions = (\".jpg\", \".jpeg\", \".png\", \".webp\")\n# Get image files\nimage_files = sorted([\n    f for f in os.listdir(folder)\n    if f.lower().endswith(image_extensions)\n])\n# 1️⃣ TEMPORARY rename to avoid collisions\nfor i, filename in enumerate(image_files):\n    ext = os.path.splitext(filename)[1].lower()\n    temp_name = f\"temp_{i}{ext}\"",
-        "detail": "rename",
-        "documentation": {}
-    },
-    {
-        "label": "image_files",
-        "kind": 5,
-        "importPath": "rename",
-        "description": "rename",
-        "peekOfCode": "image_files = sorted([\n    f for f in os.listdir(folder)\n    if f.lower().endswith(image_extensions)\n])\n# 1️⃣ TEMPORARY rename to avoid collisions\nfor i, filename in enumerate(image_files):\n    ext = os.path.splitext(filename)[1].lower()\n    temp_name = f\"temp_{i}{ext}\"\n    os.rename(os.path.join(folder, filename), os.path.join(folder, temp_name))\n# 2️⃣ FINAL rename to ordered format",
-        "detail": "rename",
-        "documentation": {}
-    },
-    {
-        "label": "temp_files",
-        "kind": 5,
-        "importPath": "rename",
-        "description": "rename",
-        "peekOfCode": "temp_files = sorted([\n    f for f in os.listdir(folder)\n    if f.startswith(\"temp_\")\n])\nfor i, filename in enumerate(temp_files):\n    ext = os.path.splitext(filename)[1].lower()\n    final_name = f\"{i}{ext}\"\n    os.rename(os.path.join(folder, filename), os.path.join(folder, final_name))\n    print(f\"✅ Renamed: {filename} ➜ {final_name}\")\nprint(\"🎉 All files renamed safely in order.\")",
-        "detail": "rename",
-        "documentation": {}
-    },
-    {
         "label": "ensure_folder",
         "kind": 2,
         "importPath": "rm_back",
@@ -559,7 +523,7 @@
         "kind": 5,
         "importPath": "rm_back",
         "description": "rm_back",
-        "peekOfCode": "DATA_DIR = \"Data\"\nOUTPUT_DIR = \"Output\"\nCLASSES = [ \"blueberries\"]\ndef ensure_folder(path):\n    if not os.path.exists(path):\n        os.makedirs(path)\ndef remove_bg_and_save(image_path, output_path):\n    # Load BGR image, convert to RGB\n    image_bgr = cv2.imread(image_path)\n    if image_bgr is None:",
+        "peekOfCode": "DATA_DIR = \"\"\nOUTPUT_DIR = \"Output\"\nCLASSES = [ \"pomegranates\"]\ndef ensure_folder(path):\n    if not os.path.exists(path):\n        os.makedirs(path)\ndef remove_bg_and_save(image_path, output_path):\n    # Load BGR image, convert to RGB\n    image_bgr = cv2.imread(image_path)\n    if image_bgr is None:",
         "detail": "rm_back",
         "documentation": {}
     },
@@ -568,7 +532,7 @@
         "kind": 5,
         "importPath": "rm_back",
         "description": "rm_back",
-        "peekOfCode": "OUTPUT_DIR = \"Output\"\nCLASSES = [ \"blueberries\"]\ndef ensure_folder(path):\n    if not os.path.exists(path):\n        os.makedirs(path)\ndef remove_bg_and_save(image_path, output_path):\n    # Load BGR image, convert to RGB\n    image_bgr = cv2.imread(image_path)\n    if image_bgr is None:\n        print(f\"❌ Failed to load {image_path}\")",
+        "peekOfCode": "OUTPUT_DIR = \"Output\"\nCLASSES = [ \"pomegranates\"]\ndef ensure_folder(path):\n    if not os.path.exists(path):\n        os.makedirs(path)\ndef remove_bg_and_save(image_path, output_path):\n    # Load BGR image, convert to RGB\n    image_bgr = cv2.imread(image_path)\n    if image_bgr is None:\n        print(f\"❌ Failed to load {image_path}\")",
         "detail": "rm_back",
         "documentation": {}
     },
@@ -577,7 +541,7 @@
         "kind": 5,
         "importPath": "rm_back",
         "description": "rm_back",
-        "peekOfCode": "CLASSES = [ \"blueberries\"]\ndef ensure_folder(path):\n    if not os.path.exists(path):\n        os.makedirs(path)\ndef remove_bg_and_save(image_path, output_path):\n    # Load BGR image, convert to RGB\n    image_bgr = cv2.imread(image_path)\n    if image_bgr is None:\n        print(f\"❌ Failed to load {image_path}\")\n        return",
+        "peekOfCode": "CLASSES = [ \"pomegranates\"]\ndef ensure_folder(path):\n    if not os.path.exists(path):\n        os.makedirs(path)\ndef remove_bg_and_save(image_path, output_path):\n    # Load BGR image, convert to RGB\n    image_bgr = cv2.imread(image_path)\n    if image_bgr is None:\n        print(f\"❌ Failed to load {image_path}\")\n        return",
         "detail": "rm_back",
         "documentation": {}
     },
@@ -604,7 +568,7 @@
         "kind": 5,
         "importPath": "rm_dup",
         "description": "rm_dup",
-        "peekOfCode": "folder_path = \"Output/blueberries\"\n# Supported image extensions\nimage_extensions = (\".jpg\", \".jpeg\", \".png\", \".webp\")\n# Count\nimage_count = sum(\n    1 for file in os.listdir(folder_path)\n    if file.lower().endswith(image_extensions)\n)\nprint(f\"🫐 Total images in '{folder_path}': {image_count}\")",
+        "peekOfCode": "folder_path = \"Output/pomegranates\"\nremove_duplicate_images(folder_path)\n# Supported image extensions\nimage_extensions = (\".jpg\", \".jpeg\", \".png\", \".webp\")\n# Count\nimage_count = sum(\n    1 for file in os.listdir(folder_path)\n    if file.lower().endswith(image_extensions)\n)\nprint(f\"🫐 Total images in '{folder_path}': {image_count}\")",
         "detail": "rm_dup",
         "documentation": {}
     },
@@ -613,7 +577,7 @@
         "kind": 5,
         "importPath": "rm_dup",
         "description": "rm_dup",
-        "peekOfCode": "image_extensions = (\".jpg\", \".jpeg\", \".png\", \".webp\")\n# Count\nimage_count = sum(\n    1 for file in os.listdir(folder_path)\n    if file.lower().endswith(image_extensions)\n)\nprint(f\"🫐 Total images in '{folder_path}': {image_count}\")",
+        "peekOfCode": "image_extensions = (\".jpg\", \".jpeg\", \".png\", \".webp\")\n# Count\nimage_count = sum(\n    1 for file in os.listdir(folder_path)\n    if file.lower().endswith(image_extensions)\n)\nprint(f\"🫐 Total images in '{folder_path}': {image_count}\")\nimport os\nfolder = folder_path\nimage_extensions = (\".jpg\", \".jpeg\", \".png\", \".webp\")",
         "detail": "rm_dup",
         "documentation": {}
     },
@@ -622,7 +586,43 @@
         "kind": 5,
         "importPath": "rm_dup",
         "description": "rm_dup",
-        "peekOfCode": "image_count = sum(\n    1 for file in os.listdir(folder_path)\n    if file.lower().endswith(image_extensions)\n)\nprint(f\"🫐 Total images in '{folder_path}': {image_count}\")",
+        "peekOfCode": "image_count = sum(\n    1 for file in os.listdir(folder_path)\n    if file.lower().endswith(image_extensions)\n)\nprint(f\"🫐 Total images in '{folder_path}': {image_count}\")\nimport os\nfolder = folder_path\nimage_extensions = (\".jpg\", \".jpeg\", \".png\", \".webp\")\n# Get image files\nimage_files = sorted([",
+        "detail": "rm_dup",
+        "documentation": {}
+    },
+    {
+        "label": "folder",
+        "kind": 5,
+        "importPath": "rm_dup",
+        "description": "rm_dup",
+        "peekOfCode": "folder = folder_path\nimage_extensions = (\".jpg\", \".jpeg\", \".png\", \".webp\")\n# Get image files\nimage_files = sorted([\n    f for f in os.listdir(folder)\n    if f.lower().endswith(image_extensions)\n])\n# 1️⃣ TEMPORARY rename to avoid collisions\nfor i, filename in enumerate(image_files):\n    ext = os.path.splitext(filename)[1].lower()",
+        "detail": "rm_dup",
+        "documentation": {}
+    },
+    {
+        "label": "image_extensions",
+        "kind": 5,
+        "importPath": "rm_dup",
+        "description": "rm_dup",
+        "peekOfCode": "image_extensions = (\".jpg\", \".jpeg\", \".png\", \".webp\")\n# Get image files\nimage_files = sorted([\n    f for f in os.listdir(folder)\n    if f.lower().endswith(image_extensions)\n])\n# 1️⃣ TEMPORARY rename to avoid collisions\nfor i, filename in enumerate(image_files):\n    ext = os.path.splitext(filename)[1].lower()\n    temp_name = f\"temp_{i}{ext}\"",
+        "detail": "rm_dup",
+        "documentation": {}
+    },
+    {
+        "label": "image_files",
+        "kind": 5,
+        "importPath": "rm_dup",
+        "description": "rm_dup",
+        "peekOfCode": "image_files = sorted([\n    f for f in os.listdir(folder)\n    if f.lower().endswith(image_extensions)\n])\n# 1️⃣ TEMPORARY rename to avoid collisions\nfor i, filename in enumerate(image_files):\n    ext = os.path.splitext(filename)[1].lower()\n    temp_name = f\"temp_{i}{ext}\"\n    os.rename(os.path.join(folder, filename), os.path.join(folder, temp_name))\n# 2️⃣ FINAL rename to ordered format",
+        "detail": "rm_dup",
+        "documentation": {}
+    },
+    {
+        "label": "temp_files",
+        "kind": 5,
+        "importPath": "rm_dup",
+        "description": "rm_dup",
+        "peekOfCode": "temp_files = sorted([\n    f for f in os.listdir(folder)\n    if f.startswith(\"temp_\")\n])\nfor i, filename in enumerate(temp_files):\n    ext = os.path.splitext(filename)[1].lower()\n    final_name = f\"{i}{ext}\"\n    os.rename(os.path.join(folder, filename), os.path.join(folder, final_name))\n    print(f\"✅ Renamed: {filename} ➜ {final_name}\")\nprint(\"🎉 All files renamed safely in order.\")",
         "detail": "rm_dup",
         "documentation": {}
     }

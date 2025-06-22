@@ -44,10 +44,11 @@ def remove_duplicate_images(folder_path):
 
 # === USAGE ===
 # Change this to your image folder (e.g., "blueberries")
-remove_duplicate_images("Data/blueberries")
+folder_path = "Output/pomegranates"
+remove_duplicate_images(folder_path)
 
 
-folder_path = "Output/blueberries"
+
 
 # Supported image extensions
 image_extensions = (".jpg", ".jpeg", ".png", ".webp")
@@ -59,3 +60,35 @@ image_count = sum(
 )
 
 print(f"🫐 Total images in '{folder_path}': {image_count}")
+
+
+import os
+
+folder = folder_path
+image_extensions = (".jpg", ".jpeg", ".png", ".webp")
+
+# Get image files
+image_files = sorted([
+    f for f in os.listdir(folder)
+    if f.lower().endswith(image_extensions)
+])
+
+# 1️⃣ TEMPORARY rename to avoid collisions
+for i, filename in enumerate(image_files):
+    ext = os.path.splitext(filename)[1].lower()
+    temp_name = f"temp_{i}{ext}"
+    os.rename(os.path.join(folder, filename), os.path.join(folder, temp_name))
+
+# 2️⃣ FINAL rename to ordered format
+temp_files = sorted([
+    f for f in os.listdir(folder)
+    if f.startswith("temp_")
+])
+
+for i, filename in enumerate(temp_files):
+    ext = os.path.splitext(filename)[1].lower()
+    final_name = f"{i}{ext}"
+    os.rename(os.path.join(folder, filename), os.path.join(folder, final_name))
+    print(f"✅ Renamed: {filename} ➜ {final_name}")
+
+print("🎉 All files renamed safely in order.")
