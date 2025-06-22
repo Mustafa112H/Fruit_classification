@@ -193,6 +193,14 @@
         "documentation": {}
     },
     {
+        "label": "Image",
+        "importPath": "PIL",
+        "description": "PIL",
+        "isExtraImport": true,
+        "detail": "PIL",
+        "documentation": {}
+    },
+    {
         "label": "tqdm",
         "importPath": "tqdm",
         "description": "tqdm",
@@ -201,11 +209,19 @@
         "documentation": {}
     },
     {
+        "label": "remove",
+        "importPath": "rembg",
+        "description": "rembg",
+        "isExtraImport": true,
+        "detail": "rembg",
+        "documentation": {}
+    },
+    {
         "label": "preprocess_image_blocked_rgb",
         "kind": 2,
         "importPath": "app",
         "description": "app",
-        "peekOfCode": "def preprocess_image_blocked_rgb(image, blocks=BLOCKS):\n    \"\"\"Extract blocked RGB features for Decision Tree\"\"\"\n    if len(image.shape) == 3 and image.shape[2] == 3:\n        image = cv2.resize(image, IMAGE_SIZE)\n        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32) / 255.0\n    else:\n        image = cv2.resize(image, IMAGE_SIZE)\n        image_rgb = image.astype(np.float32) / 255.0\n    white_mask = np.all(image_rgb > 0.9, axis=2)\n    image_rgb[white_mask] = 0.0",
+        "peekOfCode": "def preprocess_image_blocked_rgb(image, blocks=BLOCKS):\n    image = cv2.resize(image, IMAGE_SIZE)\n    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32) / 255.0\n    white_mask = np.all(image_rgb > 0.9, axis=2)\n    image_rgb[white_mask] = 0.0\n    h_blocks, w_blocks = blocks\n    h_step = IMAGE_SIZE[0] // h_blocks\n    w_step = IMAGE_SIZE[1] // w_blocks\n    features = []\n    for i in range(h_blocks):",
         "detail": "app",
         "documentation": {}
     },
@@ -214,16 +230,7 @@
         "kind": 2,
         "importPath": "app",
         "description": "app",
-        "peekOfCode": "def extract_statistical_features(image):\n    \"\"\"Extract statistical features for Naive Bayes\"\"\"\n    if len(image.shape) == 3 and image.shape[2] == 3:\n        image = cv2.resize(image, IMAGE_SIZE)\n        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)\n    else:\n        image = cv2.resize(image, IMAGE_SIZE)\n        gray = image\n    features = []\n    features.append(np.mean(gray))",
-        "detail": "app",
-        "documentation": {}
-    },
-    {
-        "label": "extract_cnn_features",
-        "kind": 2,
-        "importPath": "app",
-        "description": "app",
-        "peekOfCode": "def extract_cnn_features(model, image):\n    image = cv2.resize(image, IMAGE_SIZE)\n    if len(image.shape) == 3 and image.shape[2] == 3:\n        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)\n    image = preprocess_input(np.expand_dims(image.astype(np.float32), axis=0))\n    features = model.predict(image, verbose=0)\n    return features.flatten()\n##CNN CACHE\n@st.cache_resource\ndef get_cnn_feature_extractor():",
+        "peekOfCode": "def extract_statistical_features(image):\n    image = cv2.resize(image, IMAGE_SIZE)\n    features = []\n    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)\n    features.append(np.mean(gray))\n    features.append(np.std(gray))\n    for i in range(3):\n        channel = image[:, :, i]\n        features.append(np.mean(channel))\n        features.append(np.std(channel))",
         "detail": "app",
         "documentation": {}
     },
@@ -232,16 +239,16 @@
         "kind": 2,
         "importPath": "app",
         "description": "app",
-        "peekOfCode": "def get_cnn_feature_extractor():\n    \"\"\"Get CNN feature extractor (cached)\"\"\"\n    base_model = VGG16(weights='imagenet', include_top=False, input_shape=(IMAGE_SIZE[0], IMAGE_SIZE[1], 3))\n    model = Model(inputs=base_model.input, outputs=base_model.output)\n    return model\n## FOR UPLOADED PHOTOS\ndef process_uploaded_image_for_prediction(uploaded_file, cnn_model=None):\n    \"\"\"Process uploaded image and extract all required features\"\"\"\n    # Reset file pointer to beginning\n    uploaded_file.seek(0)",
+        "peekOfCode": "def get_cnn_feature_extractor():\n    base_model = VGG16(weights='imagenet', include_top=False, input_shape=(IMAGE_SIZE[0],IMAGE_SIZE[1], 3))\n    model = Model(inputs=base_model.input, outputs=base_model.output)\n    return model\ndef extract_cnn_features(model, image):\n    image = cv2.resize(image,IMAGE_SIZE)\n    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)\n    image = preprocess_input(np.expand_dims(image.astype(np.float32), axis=0))\n    features = model.predict(image, verbose=0)\n    return features.flatten()",
         "detail": "app",
         "documentation": {}
     },
     {
-        "label": "process_uploaded_image_for_prediction",
+        "label": "extract_cnn_features",
         "kind": 2,
         "importPath": "app",
         "description": "app",
-        "peekOfCode": "def process_uploaded_image_for_prediction(uploaded_file, cnn_model=None):\n    \"\"\"Process uploaded image and extract all required features\"\"\"\n    # Reset file pointer to beginning\n    uploaded_file.seek(0)\n    file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)\n    img_bgr = cv2.imdecode(file_bytes, 1)\n    # Ensure we have a valid image\n    if img_bgr is None:\n        st.error(\"❌ Could not decode image. Please try a different image.\")\n        return None, None",
+        "peekOfCode": "def extract_cnn_features(model, image):\n    image = cv2.resize(image,IMAGE_SIZE)\n    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)\n    image = preprocess_input(np.expand_dims(image.astype(np.float32), axis=0))\n    features = model.predict(image, verbose=0)\n    return features.flatten()\n## GET THE DATA BALANCE IT AND SHUFFLE SO WE GET DIFFERENT SPLITS AND CAN GET MORE ACCURATE RESULTS \ndef load_image_paths_and_labels():\n    X_paths, y, paths = [], [], []\n    label_map = {name: idx for idx, name in enumerate(CLASSES)}",
         "detail": "app",
         "documentation": {}
     },
@@ -250,7 +257,7 @@
         "kind": 2,
         "importPath": "app",
         "description": "app",
-        "peekOfCode": "def load_image_paths_and_labels():\n    \"\"\"Load and balance dataset\"\"\"\n    X_paths, y, paths = [], [], []\n    label_map = {name: idx for idx, name in enumerate(CLASSES)}\n    class_files = {}\n    for cls in CLASSES:\n        folder = os.path.join(DATA_DIR, cls)\n        if not os.path.exists(folder):\n            st.error(f\"❌ Data folder '{folder}' not found!\")\n            return [], np.array([]), {}",
+        "peekOfCode": "def load_image_paths_and_labels():\n    X_paths, y, paths = [], [], []\n    label_map = {name: idx for idx, name in enumerate(CLASSES)}\n    class_files = {}\n    for cls in CLASSES:\n        folder = os.path.join(DATA_DIR, cls)\n        files = [f for f in os.listdir(folder) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]\n        class_files[cls] = sorted(files)\n    min_count = min(len(files) for files in class_files.values())\n    st.markdown(f\"\"\"",
         "detail": "app",
         "documentation": {}
     },
@@ -268,7 +275,7 @@
         "kind": 2,
         "importPath": "app",
         "description": "app",
-        "peekOfCode": "def create_classification_report_table(y_true, y_pred, class_names, model_name):\n    \"\"\"Create classification report as DataFrame\"\"\"\n    report = classification_report(y_true, y_pred, target_names=class_names, output_dict=True)\n    df_data = []\n    for class_name in class_names:\n        if class_name in report:\n            df_data.append({\n                'Class': class_name.title(),\n                'Precision': round(report[class_name]['precision'], 3),\n                'Recall': round(report[class_name]['recall'], 3),",
+        "peekOfCode": "def create_classification_report_table(y_true, y_pred, class_names, model_name):\n    report = classification_report(y_true, y_pred, target_names=class_names, output_dict=True)\n    df_data = []\n    for class_name in class_names:\n        if class_name in report:\n            df_data.append({\n                'Class': class_name.title(),\n                'Precision': round(report[class_name]['precision'], 3),\n                'Recall': round(report[class_name]['recall'], 3),\n                'F1-Score': round(report[class_name]['f1-score'], 3),",
         "detail": "app",
         "documentation": {}
     },
@@ -277,16 +284,7 @@
         "kind": 2,
         "importPath": "app",
         "description": "app",
-        "peekOfCode": "def plot_confusion_matrix(ax, cm, class_names, title):\n    \"\"\"Plot confusion matrix\"\"\"\n    cmap = plt.cm.Blues\n    sns.heatmap(\n        cm,\n        annot=True,\n        fmt=\".2f\",\n        cmap=cmap,\n        cbar=True,\n        xticklabels=class_names,",
-        "detail": "app",
-        "documentation": {}
-    },
-    {
-        "label": "predict_single_image",
-        "kind": 2,
-        "importPath": "app",
-        "description": "app",
-        "peekOfCode": "def predict_single_image(image_features, models, scalers, class_names):\n    \"\"\"Make predictions on a single image using all trained models\"\"\"\n    predictions = {}\n    if 'dt_model' in models and models['dt_model'] is not None:\n        dt_pred = models['dt_model'].predict(image_features['dt'].reshape(1, -1))[0]\n        predictions['Decision Tree'] = class_names[dt_pred]\n    if 'nb_model' in models and models['nb_model'] is not None:\n        nb_feat_scaled = scalers['nb'].transform(image_features['nb'].reshape(1, -1))\n        nb_pred = models['nb_model'].predict(nb_feat_scaled)[0]\n        predictions['Naive Bayes'] = class_names[nb_pred]",
+        "peekOfCode": "def plot_confusion_matrix(ax, cm, class_names, title):\n    cmap = plt.cm.Blues\n    sns.heatmap(\n        cm,\n        annot=True,\n        fmt=\".2f\",\n        cmap=cmap,\n        cbar=True,\n        xticklabels=class_names,\n        yticklabels=class_names,",
         "detail": "app",
         "documentation": {}
     },
@@ -295,25 +293,7 @@
         "kind": 2,
         "importPath": "app",
         "description": "app",
-        "peekOfCode": "def main():\n    # Header\n    st.markdown(\"\"\"\n    <div class=\"main-header\">\n        <h1>🧠 Advanced ML Classification Suite</h1>\n        <p>Comparative Study of Image Classification Using Decision Tree, Naive Bayes, and CNN+MLP</p>\n    </div>\n    \"\"\", unsafe_allow_html=True)\n    #SESSION BEGIN \n    if 'experiment_completed' not in st.session_state:",
-        "detail": "app",
-        "documentation": {}
-    },
-    {
-        "label": "login",
-        "kind": 2,
-        "importPath": "app",
-        "description": "app",
-        "peekOfCode": "def login():\n    \"\"\"Simple login interface\"\"\"\n    st.markdown(\"\"\"\n    <style>\n        .login-container {\n            display: flex;\n            flex-direction: column;\n            align-items: center;\n            justify-content: center;\n            margin-top: 100px;",
-        "detail": "app",
-        "documentation": {}
-    },
-    {
-        "label": "USER_CREDENTIALS",
-        "kind": 5,
-        "importPath": "app",
-        "description": "app",
-        "peekOfCode": "USER_CREDENTIALS = {\n    \"admin\": \"1234\"\n}\n#PAGE SET UP \nst.set_page_config(\n    page_title=\"Advanced ML Classification Suite\",\n    page_icon=\"🧠\",\n    layout=\"wide\",\n    initial_sidebar_state=\"expanded\"\n)",
+        "peekOfCode": "def main():\n    # Header\n    st.markdown(\"\"\"\n    <div class=\"main-header\">\n        <h1>🧠 Advanced ML Classification Suite</h1>\n        <p>Comparative Study of Image Classification Using Decision Tree, Naive Bayes, and CNN+MLP</p>\n    </div>\n    \"\"\", unsafe_allow_html=True)\n    #START AND SAVE SESSION SO WHEN YOU LOOK AT A TREE OR SOMETHING IT DOESNT RESET\n    if 'experiment_completed' not in st.session_state:",
         "detail": "app",
         "documentation": {}
     },
@@ -322,7 +302,7 @@
         "kind": 5,
         "importPath": "app",
         "description": "app",
-        "peekOfCode": "DATA_DIR = \"Data\"\nCLASSES = [\"banana\", \"blueberries\", \"pomegranates\"]\nIMAGE_SIZE = (64, 64)\nBLOCKS = (4, 4)\n## FOR DT GET DATA READY\ndef preprocess_image_blocked_rgb(image, blocks=BLOCKS):\n    \"\"\"Extract blocked RGB features for Decision Tree\"\"\"\n    if len(image.shape) == 3 and image.shape[2] == 3:\n        image = cv2.resize(image, IMAGE_SIZE)\n        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32) / 255.0",
+        "peekOfCode": "DATA_DIR = \"Data\"\nCLASSES = [\"banana\", \"blueberries\", \"pomegranates\"]\nIMAGE_SIZE = (64, 64)\nBLOCKS = (4, 4)\n# -- THIS IS USED FOR THE DECISION TREE IN ORDER NOT TO OVERFIT AND MAKE THE TREE HUGE --> LARGE TIME\ndef preprocess_image_blocked_rgb(image, blocks=BLOCKS):\n    image = cv2.resize(image, IMAGE_SIZE)\n    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32) / 255.0\n    white_mask = np.all(image_rgb > 0.9, axis=2)\n    image_rgb[white_mask] = 0.0",
         "detail": "app",
         "documentation": {}
     },
@@ -331,7 +311,7 @@
         "kind": 5,
         "importPath": "app",
         "description": "app",
-        "peekOfCode": "CLASSES = [\"banana\", \"blueberries\", \"pomegranates\"]\nIMAGE_SIZE = (64, 64)\nBLOCKS = (4, 4)\n## FOR DT GET DATA READY\ndef preprocess_image_blocked_rgb(image, blocks=BLOCKS):\n    \"\"\"Extract blocked RGB features for Decision Tree\"\"\"\n    if len(image.shape) == 3 and image.shape[2] == 3:\n        image = cv2.resize(image, IMAGE_SIZE)\n        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32) / 255.0\n    else:",
+        "peekOfCode": "CLASSES = [\"banana\", \"blueberries\", \"pomegranates\"]\nIMAGE_SIZE = (64, 64)\nBLOCKS = (4, 4)\n# -- THIS IS USED FOR THE DECISION TREE IN ORDER NOT TO OVERFIT AND MAKE THE TREE HUGE --> LARGE TIME\ndef preprocess_image_blocked_rgb(image, blocks=BLOCKS):\n    image = cv2.resize(image, IMAGE_SIZE)\n    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32) / 255.0\n    white_mask = np.all(image_rgb > 0.9, axis=2)\n    image_rgb[white_mask] = 0.0\n    h_blocks, w_blocks = blocks",
         "detail": "app",
         "documentation": {}
     },
@@ -340,7 +320,7 @@
         "kind": 5,
         "importPath": "app",
         "description": "app",
-        "peekOfCode": "IMAGE_SIZE = (64, 64)\nBLOCKS = (4, 4)\n## FOR DT GET DATA READY\ndef preprocess_image_blocked_rgb(image, blocks=BLOCKS):\n    \"\"\"Extract blocked RGB features for Decision Tree\"\"\"\n    if len(image.shape) == 3 and image.shape[2] == 3:\n        image = cv2.resize(image, IMAGE_SIZE)\n        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32) / 255.0\n    else:\n        image = cv2.resize(image, IMAGE_SIZE)",
+        "peekOfCode": "IMAGE_SIZE = (64, 64)\nBLOCKS = (4, 4)\n# -- THIS IS USED FOR THE DECISION TREE IN ORDER NOT TO OVERFIT AND MAKE THE TREE HUGE --> LARGE TIME\ndef preprocess_image_blocked_rgb(image, blocks=BLOCKS):\n    image = cv2.resize(image, IMAGE_SIZE)\n    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32) / 255.0\n    white_mask = np.all(image_rgb > 0.9, axis=2)\n    image_rgb[white_mask] = 0.0\n    h_blocks, w_blocks = blocks\n    h_step = IMAGE_SIZE[0] // h_blocks",
         "detail": "app",
         "documentation": {}
     },
@@ -349,7 +329,7 @@
         "kind": 5,
         "importPath": "app",
         "description": "app",
-        "peekOfCode": "BLOCKS = (4, 4)\n## FOR DT GET DATA READY\ndef preprocess_image_blocked_rgb(image, blocks=BLOCKS):\n    \"\"\"Extract blocked RGB features for Decision Tree\"\"\"\n    if len(image.shape) == 3 and image.shape[2] == 3:\n        image = cv2.resize(image, IMAGE_SIZE)\n        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32) / 255.0\n    else:\n        image = cv2.resize(image, IMAGE_SIZE)\n        image_rgb = image.astype(np.float32) / 255.0",
+        "peekOfCode": "BLOCKS = (4, 4)\n# -- THIS IS USED FOR THE DECISION TREE IN ORDER NOT TO OVERFIT AND MAKE THE TREE HUGE --> LARGE TIME\ndef preprocess_image_blocked_rgb(image, blocks=BLOCKS):\n    image = cv2.resize(image, IMAGE_SIZE)\n    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32) / 255.0\n    white_mask = np.all(image_rgb > 0.9, axis=2)\n    image_rgb[white_mask] = 0.0\n    h_blocks, w_blocks = blocks\n    h_step = IMAGE_SIZE[0] // h_blocks\n    w_step = IMAGE_SIZE[1] // w_blocks",
         "detail": "app",
         "documentation": {}
     },
@@ -369,6 +349,60 @@
         "description": "dup",
         "peekOfCode": "def remove_duplicate_images(folder_path):\n    hashes = {}\n    duplicates = []\n    for filename in tqdm(os.listdir(folder_path)):\n        file_path = os.path.join(folder_path, filename)\n        try:\n            with Image.open(file_path) as img:\n                hash_val = dhash(img)\n                if hash_val in hashes:\n                    duplicates.append(file_path)",
         "detail": "dup",
+        "documentation": {}
+    },
+    {
+        "label": "ensure_folder",
+        "kind": 2,
+        "importPath": "test",
+        "description": "test",
+        "peekOfCode": "def ensure_folder(path):\n    if not os.path.exists(path):\n        os.makedirs(path)\ndef remove_bg_and_save(image_path, output_path):\n    # Load BGR image, convert to RGB\n    image_bgr = cv2.imread(image_path)\n    if image_bgr is None:\n        print(f\"❌ Failed to load {image_path}\")\n        return\n    image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)",
+        "detail": "test",
+        "documentation": {}
+    },
+    {
+        "label": "remove_bg_and_save",
+        "kind": 2,
+        "importPath": "test",
+        "description": "test",
+        "peekOfCode": "def remove_bg_and_save(image_path, output_path):\n    # Load BGR image, convert to RGB\n    image_bgr = cv2.imread(image_path)\n    if image_bgr is None:\n        print(f\"❌ Failed to load {image_path}\")\n        return\n    image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)\n    pil_image = Image.fromarray(image_rgb).convert(\"RGBA\")\n    # Remove background using rembg\n    result = remove(pil_image)",
+        "detail": "test",
+        "documentation": {}
+    },
+    {
+        "label": "process_class_folder",
+        "kind": 2,
+        "importPath": "test",
+        "description": "test",
+        "peekOfCode": "def process_class_folder(class_name):\n    input_folder = os.path.join(DATA_DIR, class_name)\n    output_folder = os.path.join(OUTPUT_DIR, class_name)\n    ensure_folder(output_folder)\n    for filename in os.listdir(input_folder):\n        if filename.lower().endswith((\".png\", \".jpg\", \".jpeg\")):\n            input_path = os.path.join(input_folder, filename)\n            output_path = os.path.join(output_folder, os.path.splitext(filename)[0] + \".png\")\n            if os.path.exists(output_path):\n                print(f\"⏩ Skipped (already processed): {output_path}\")",
+        "detail": "test",
+        "documentation": {}
+    },
+    {
+        "label": "DATA_DIR",
+        "kind": 5,
+        "importPath": "test",
+        "description": "test",
+        "peekOfCode": "DATA_DIR = \"Data\"\nOUTPUT_DIR = \"Output\"\nCLASSES = [\"banana\", \"blueberries\", \"pomegranates\"]\ndef ensure_folder(path):\n    if not os.path.exists(path):\n        os.makedirs(path)\ndef remove_bg_and_save(image_path, output_path):\n    # Load BGR image, convert to RGB\n    image_bgr = cv2.imread(image_path)\n    if image_bgr is None:",
+        "detail": "test",
+        "documentation": {}
+    },
+    {
+        "label": "OUTPUT_DIR",
+        "kind": 5,
+        "importPath": "test",
+        "description": "test",
+        "peekOfCode": "OUTPUT_DIR = \"Output\"\nCLASSES = [\"banana\", \"blueberries\", \"pomegranates\"]\ndef ensure_folder(path):\n    if not os.path.exists(path):\n        os.makedirs(path)\ndef remove_bg_and_save(image_path, output_path):\n    # Load BGR image, convert to RGB\n    image_bgr = cv2.imread(image_path)\n    if image_bgr is None:\n        print(f\"❌ Failed to load {image_path}\")",
+        "detail": "test",
+        "documentation": {}
+    },
+    {
+        "label": "CLASSES",
+        "kind": 5,
+        "importPath": "test",
+        "description": "test",
+        "peekOfCode": "CLASSES = [\"banana\", \"blueberries\", \"pomegranates\"]\ndef ensure_folder(path):\n    if not os.path.exists(path):\n        os.makedirs(path)\ndef remove_bg_and_save(image_path, output_path):\n    # Load BGR image, convert to RGB\n    image_bgr = cv2.imread(image_path)\n    if image_bgr is None:\n        print(f\"❌ Failed to load {image_path}\")\n        return",
+        "detail": "test",
         "documentation": {}
     }
 ]
