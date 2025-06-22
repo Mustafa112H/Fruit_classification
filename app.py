@@ -1405,6 +1405,11 @@ def main():
             - **Per-Model Comparison**: Side-by-side performance analysis
             ---
             """)
+    st.markdown("""
+        <div style="text-align: center; font-size: 10px; color: #ccc; margin-top: 50px;">
+            give us bonus 🙃
+        </div>
+        """, unsafe_allow_html=True)
 
 def login():
 
