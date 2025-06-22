@@ -328,6 +328,14 @@
         "documentation": {}
     },
     {
+        "label": "Image",
+        "importPath": "PIL",
+        "description": "PIL",
+        "isExtraImport": true,
+        "detail": "PIL",
+        "documentation": {}
+    },
+    {
         "label": "GoogleImageCrawler",
         "importPath": "icrawler.builtin",
         "description": "icrawler.builtin",
@@ -366,6 +374,23 @@
         "importPath": "shutil",
         "description": "shutil",
         "detail": "shutil",
+        "documentation": {}
+    },
+    {
+        "label": "hashlib",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "hashlib",
+        "description": "hashlib",
+        "detail": "hashlib",
+        "documentation": {}
+    },
+    {
+        "label": "tqdm",
+        "importPath": "tqdm",
+        "description": "tqdm",
+        "isExtraImport": true,
+        "detail": "tqdm",
         "documentation": {}
     },
     {
@@ -855,11 +880,29 @@
         "documentation": {}
     },
     {
+        "label": "dhash",
+        "kind": 2,
+        "importPath": "rm_dup",
+        "description": "rm_dup",
+        "peekOfCode": "def dhash(image, hash_size=8):\n    image = image.convert(\"L\").resize((hash_size + 1, hash_size), Image.Resampling.LANCZOS)\n    diff = []\n    for row in range(hash_size):\n        for col in range(hash_size):\n            pixel_left = image.getpixel((col, row))\n            pixel_right = image.getpixel((col + 1, row))\n            diff.append(pixel_left > pixel_right)\n    decimal_value = 0\n    hex_string = []",
+        "detail": "rm_dup",
+        "documentation": {}
+    },
+    {
+        "label": "remove_duplicate_images",
+        "kind": 2,
+        "importPath": "rm_dup",
+        "description": "rm_dup",
+        "peekOfCode": "def remove_duplicate_images(folder_path):\n    hashes = {}\n    duplicates = []\n    for filename in tqdm(os.listdir(folder_path)):\n        file_path = os.path.join(folder_path, filename)\n        try:\n            with Image.open(file_path) as img:\n                hash_val = dhash(img)\n                if hash_val in hashes:\n                    duplicates.append(file_path)",
+        "detail": "rm_dup",
+        "documentation": {}
+    },
+    {
         "label": "folder",
         "kind": 5,
         "importPath": "rm_dup",
         "description": "rm_dup",
-        "peekOfCode": "folder = \"Output/blueberries\"\nimage_extensions = (\".jpg\", \".jpeg\", \".png\", \".webp\")\n# Get image files\nimage_files = sorted([\n    f for f in os.listdir(folder)\n    if f.lower().endswith(image_extensions)\n])\n# 1️⃣ TEMPORARY rename to avoid collisions\nfor i, filename in enumerate(image_files):\n    ext = os.path.splitext(filename)[1].lower()",
+        "peekOfCode": "folder = \"Output/blueberries\"\nremove_duplicate_images(folder)\nimport os\nimage_extensions = (\".jpg\", \".jpeg\", \".png\", \".webp\")\n# Get image files\nimage_files = sorted([\n    f for f in os.listdir(folder)\n    if f.lower().endswith(image_extensions)\n])\n# 1️⃣ TEMPORARY rename to avoid collisions",
         "detail": "rm_dup",
         "documentation": {}
     },
