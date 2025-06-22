@@ -1103,12 +1103,16 @@ def main():
 
         
         for model_key, runs in st.session_state.last_predictions.items():
-            st.markdown(f"#### {'🌳 Decision Tree' if model_key == 'dt' else '⚡ Naive Bayes' if model_key == 'nb' else '🧠 CNN + MLP'}")
+                st.markdown(f"#### {'🌳 Decision Tree' if model_key == 'dt' else '⚡ Naive Bayes' if model_key == 'nb' else '🧠 CNN + MLP'}")
 
-            for i, (y_test, y_pred) in enumerate(runs, start=1):
-                st.markdown(f"**Run {i}**")
+                all_y_true = []
+                all_y_pred = []
 
-                report_dict = classification_report(y_test, y_pred, target_names=st.session_state.class_names, output_dict=True)
+                for y_test, y_pred in runs:
+                    all_y_true.extend(y_test)
+                    all_y_pred.extend(y_pred)
+
+                report_dict = classification_report(all_y_true, all_y_pred, target_names=st.session_state.class_names, output_dict=True)
                 report_df = pd.DataFrame(report_dict).transpose().reset_index().rename(columns={
                     "index": "Class",
                     "precision": "Precision",
@@ -1129,6 +1133,8 @@ def main():
                 ])
 
                 st.dataframe(styled_df, use_container_width=True, hide_index=True)
+
+
             
         
 
