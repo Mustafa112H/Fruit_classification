@@ -714,7 +714,7 @@ def main():
     min_samples_split = st.sidebar.slider("Min Samples Split", min_value=2, max_value=50, value=10, step=2)
     min_samples_leaf = st.sidebar.slider("Min Samples Leaf", min_value=1, max_value=20, value=5, step=1)
     min_impurity_decrease = st.sidebar.slider("Min Impurity Decrease", min_value=0.0, max_value=0.1, value=0.01, step=0.01)
-    user_ccp_alpha = st.sidebar.slider("Post-Pruning Alpha (ccp_alpha)", min_value=0.0, max_value=0.05, value=0.001, step=0.001,format="%.3f")
+    user_ccp_alpha = st.sidebar.slider("Post-Pruning Alpha (ccp_alpha)", min_value=0.0, max_value=0.05, value=0.005, step=0.001,format="%.3f")
 
     # PRUNE INFO BOX
     st.sidebar.markdown("""
