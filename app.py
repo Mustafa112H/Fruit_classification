@@ -1007,11 +1007,10 @@ def main():
                 run_results.append(("🧠 CNN+MLP", acc_mlp, "#e74c3c"))
                 st.session_state.last_predictions.setdefault('mlp', []).append((y_test, y_pred_mlp))
                 
-             
+                
                 if run_i == N_RUNS:
                     st.session_state.trained_models['mlp_model'] = mlp_model
                     st.session_state.trained_scalers['cnn'] = scaler_cnn
-                    st.session_state.last_predictions.setdefault('mlp', []).append((y_test, y_pred_nb))
                 
     
                 if uploaded_image and 'upload_features' in st.session_state:
