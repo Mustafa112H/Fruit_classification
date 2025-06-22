@@ -44,7 +44,7 @@ def remove_duplicate_images(folder_path):
 
 # === USAGE ===
 # Change this to your image folder (e.g., "blueberries")
-folder_path = "Output/pomegranates"
+folder_path = "Output/banana"
 remove_duplicate_images(folder_path)
 
 

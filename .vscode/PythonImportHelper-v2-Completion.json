@@ -424,7 +424,7 @@
         "kind": 5,
         "importPath": "get_data",
         "description": "get_data",
-        "peekOfCode": "keyword = 'banana no back'\nbing_crawler = BingImageCrawler(storage={'root_dir': 'Data/banana'})\nbing_crawler.crawl(keyword=keyword, max_num=300, file_idx_offset=1900)\ncrawler2 = GoogleImageCrawler(storage={'root_dir': 'Data/banana'})\ncrawler2.crawl(keyword=keyword, max_num=300, file_idx_offset=900)",
+        "peekOfCode": "keyword = 'banana background'\nbing_crawler = BingImageCrawler(storage={'root_dir': 'Data/banana'})\nbing_crawler.crawl(keyword=keyword, max_num=300, file_idx_offset=2100)\ncrawler2 = GoogleImageCrawler(storage={'root_dir': 'Data/banana'})\ncrawler2.crawl(keyword=keyword, max_num=300, file_idx_offset=3000)",
         "detail": "get_data",
         "documentation": {}
     },
@@ -433,7 +433,7 @@
         "kind": 5,
         "importPath": "get_data",
         "description": "get_data",
-        "peekOfCode": "bing_crawler = BingImageCrawler(storage={'root_dir': 'Data/banana'})\nbing_crawler.crawl(keyword=keyword, max_num=300, file_idx_offset=1900)\ncrawler2 = GoogleImageCrawler(storage={'root_dir': 'Data/banana'})\ncrawler2.crawl(keyword=keyword, max_num=300, file_idx_offset=900)",
+        "peekOfCode": "bing_crawler = BingImageCrawler(storage={'root_dir': 'Data/banana'})\nbing_crawler.crawl(keyword=keyword, max_num=300, file_idx_offset=2100)\ncrawler2 = GoogleImageCrawler(storage={'root_dir': 'Data/banana'})\ncrawler2.crawl(keyword=keyword, max_num=300, file_idx_offset=3000)",
         "detail": "get_data",
         "documentation": {}
     },
@@ -442,7 +442,7 @@
         "kind": 5,
         "importPath": "get_data",
         "description": "get_data",
-        "peekOfCode": "crawler2 = GoogleImageCrawler(storage={'root_dir': 'Data/banana'})\ncrawler2.crawl(keyword=keyword, max_num=300, file_idx_offset=900)",
+        "peekOfCode": "crawler2 = GoogleImageCrawler(storage={'root_dir': 'Data/banana'})\ncrawler2.crawl(keyword=keyword, max_num=300, file_idx_offset=3000)",
         "detail": "get_data",
         "documentation": {}
     },
@@ -568,7 +568,7 @@
         "kind": 5,
         "importPath": "rm_dup",
         "description": "rm_dup",
-        "peekOfCode": "folder_path = \"Output/pomegranates\"\nremove_duplicate_images(folder_path)\n# Supported image extensions\nimage_extensions = (\".jpg\", \".jpeg\", \".png\", \".webp\")\n# Count\nimage_count = sum(\n    1 for file in os.listdir(folder_path)\n    if file.lower().endswith(image_extensions)\n)\nprint(f\"🫐 Total images in '{folder_path}': {image_count}\")",
+        "peekOfCode": "folder_path = \"Output/banana\"\nremove_duplicate_images(folder_path)\n# Supported image extensions\nimage_extensions = (\".jpg\", \".jpeg\", \".png\", \".webp\")\n# Count\nimage_count = sum(\n    1 for file in os.listdir(folder_path)\n    if file.lower().endswith(image_extensions)\n)\nprint(f\"🫐 Total images in '{folder_path}': {image_count}\")",
         "detail": "rm_dup",
         "documentation": {}
     },
