@@ -44,6 +44,7 @@ def remove_duplicate_images(folder_path):
 
 # === USAGE ===
 # Change this to your image folder (e.g., "blueberries")
+<<<<<<< Updated upstream:rm_dup.py
 folder_path = "Output/banana"
 remove_duplicate_images(folder_path)
 
@@ -92,3 +93,6 @@ for i, filename in enumerate(temp_files):
     print(f"✅ Renamed: {filename} ➜ {final_name}")
 
 print("🎉 All files renamed safely in order.")
+=======
+remove_duplicate_images("folder_name")
+>>>>>>> Stashed changes:dup.py

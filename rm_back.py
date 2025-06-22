@@ -4,10 +4,13 @@ import numpy as np
 from rembg import remove
 from PIL import Image
 
-# Paths
-DATA_DIR = "Data"
+DATA_DIR = ""
 OUTPUT_DIR = "Output"
+<<<<<<< Updated upstream:rm_back.py
 CLASSES = [ "banana"]
+=======
+CLASSES = [ "folder_name"]
+>>>>>>> Stashed changes:test.py
 
 def ensure_folder(path):
     if not os.path.exists(path):
@@ -47,7 +50,7 @@ def process_class_folder(class_name):
 
             remove_bg_and_save(input_path, output_path)
 
-# Process all classes
+#Process all classes
 for cls in CLASSES:
     class_folder = os.path.join(DATA_DIR, cls)
     if os.path.isdir(class_folder):
