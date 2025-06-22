@@ -2,8 +2,8 @@ import os
 import shutil
 
 # Define paths
-source_folder = "blueberries"
-destination_folder = "Data/blueberries"
+source_folder = "pomegranates"
+destination_folder = "Data/pomegranates"
 
 # Create destination folder if it doesn't exist
 os.makedirs(destination_folder, exist_ok=True)
@@ -19,7 +19,7 @@ for filename in os.listdir(source_folder):
 
 print("✅ All images moved successfully.")
 
-folder_path = "Data/blueberries"
+folder_path = destination_folder
 
 # Supported image extensions
 image_extensions = (".jpg", ".jpeg", ".png", ".webp")

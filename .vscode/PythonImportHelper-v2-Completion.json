@@ -451,7 +451,7 @@
         "kind": 5,
         "importPath": "move_photos",
         "description": "move_photos",
-        "peekOfCode": "source_folder = \"blueberries\"\ndestination_folder = \"Data/blueberries\"\n# Create destination folder if it doesn't exist\nos.makedirs(destination_folder, exist_ok=True)\n# Move image files\nfor filename in os.listdir(source_folder):\n    if filename.lower().endswith((\".jpg\", \".jpeg\", \".png\", \".webp\")):\n        src_path = os.path.join(source_folder, filename)\n        dst_path = os.path.join(destination_folder, filename)\n        shutil.move(src_path, dst_path)",
+        "peekOfCode": "source_folder = \"pomegranates\"\ndestination_folder = \"Data/pomegranates\"\n# Create destination folder if it doesn't exist\nos.makedirs(destination_folder, exist_ok=True)\n# Move image files\nfor filename in os.listdir(source_folder):\n    if filename.lower().endswith((\".jpg\", \".jpeg\", \".png\", \".webp\")):\n        src_path = os.path.join(source_folder, filename)\n        dst_path = os.path.join(destination_folder, filename)\n        shutil.move(src_path, dst_path)",
         "detail": "move_photos",
         "documentation": {}
     },
@@ -460,7 +460,7 @@
         "kind": 5,
         "importPath": "move_photos",
         "description": "move_photos",
-        "peekOfCode": "destination_folder = \"Data/blueberries\"\n# Create destination folder if it doesn't exist\nos.makedirs(destination_folder, exist_ok=True)\n# Move image files\nfor filename in os.listdir(source_folder):\n    if filename.lower().endswith((\".jpg\", \".jpeg\", \".png\", \".webp\")):\n        src_path = os.path.join(source_folder, filename)\n        dst_path = os.path.join(destination_folder, filename)\n        shutil.move(src_path, dst_path)\n        print(f\"✅ Moved: {filename}\")",
+        "peekOfCode": "destination_folder = \"Data/pomegranates\"\n# Create destination folder if it doesn't exist\nos.makedirs(destination_folder, exist_ok=True)\n# Move image files\nfor filename in os.listdir(source_folder):\n    if filename.lower().endswith((\".jpg\", \".jpeg\", \".png\", \".webp\")):\n        src_path = os.path.join(source_folder, filename)\n        dst_path = os.path.join(destination_folder, filename)\n        shutil.move(src_path, dst_path)\n        print(f\"✅ Moved: {filename}\")",
         "detail": "move_photos",
         "documentation": {}
     },
@@ -469,7 +469,7 @@
         "kind": 5,
         "importPath": "move_photos",
         "description": "move_photos",
-        "peekOfCode": "folder_path = \"Data/blueberries\"\n# Supported image extensions\nimage_extensions = (\".jpg\", \".jpeg\", \".png\", \".webp\")\n# Count\nimage_count = sum(\n    1 for file in os.listdir(folder_path)\n    if file.lower().endswith(image_extensions)\n)\nprint(f\"🫐 Total images in '{folder_path}': {image_count}\")",
+        "peekOfCode": "folder_path = destination_folder\n# Supported image extensions\nimage_extensions = (\".jpg\", \".jpeg\", \".png\", \".webp\")\n# Count\nimage_count = sum(\n    1 for file in os.listdir(folder_path)\n    if file.lower().endswith(image_extensions)\n)\nprint(f\"🫐 Total images in '{folder_path}': {image_count}\")",
         "detail": "move_photos",
         "documentation": {}
     },
