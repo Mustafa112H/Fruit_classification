@@ -1103,32 +1103,32 @@ def main():
 
         
         for model_key, runs in st.session_state.last_predictions.items():
-                st.markdown(f"#### {'🌳 Decision Tree' if model_key == 'dt' else '⚡ Naive Bayes' if model_key == 'nb' else '🧠 CNN + MLP'}")
+            st.markdown(f"#### {'🌳 Decision Tree' if model_key == 'dt' else '⚡ Naive Bayes' if model_key == 'nb' else '🧠 CNN + MLP'}")
 
-                for i, (y_test, y_pred) in enumerate(runs, start=1):
-                    st.markdown(f"**Run {i}**")
+            for i, (y_test, y_pred) in enumerate(runs, start=1):
+                st.markdown(f"**Run {i}**")
 
-                    report_dict = classification_report(y_test, y_pred, target_names=st.session_state.class_names, output_dict=True)
-                    report_df = pd.DataFrame(report_dict).transpose().reset_index().rename(columns={
-                        "index": "Class",
-                        "precision": "Precision",
-                        "recall": "Recall",
-                        "f1-score": "F1-Score",
-                        "support": "Support"
-                    })
+                report_dict = classification_report(y_test, y_pred, target_names=st.session_state.class_names, output_dict=True)
+                report_df = pd.DataFrame(report_dict).transpose().reset_index().rename(columns={
+                    "index": "Class",
+                    "precision": "Precision",
+                    "recall": "Recall",
+                    "f1-score": "F1-Score",
+                    "support": "Support"
+                })
 
-                    styled_df = report_df.style.format({
-                        'Precision': '{:.3f}',
-                        'Recall': '{:.3f}',
-                        'F1-Score': '{:.3f}',
-                        'Support': '{:,.0f}'
-                    }).set_table_styles([
-                        {'selector': 'thead th', 'props': [('background-color', '#3498db'), ('color', 'white'), ('font-weight', 'bold')]},
-                        {'selector': 'tbody tr:nth-child(even)', 'props': [('background-color', '#f8f9fa')]},
-                        {'selector': 'tbody tr:hover', 'props': [('background-color', '#e3f2fd')]},
-                    ])
+                styled_df = report_df.style.format({
+                    'Precision': '{:.3f}',
+                    'Recall': '{:.3f}',
+                    'F1-Score': '{:.3f}',
+                    'Support': '{:,.0f}'
+                }).set_table_styles([
+                    {'selector': 'thead th', 'props': [('background-color', '#3498db'), ('color', 'white'), ('font-weight', 'bold')]},
+                    {'selector': 'tbody tr:nth-child(even)', 'props': [('background-color', '#f8f9fa')]},
+                    {'selector': 'tbody tr:hover', 'props': [('background-color', '#e3f2fd')]},
+                ])
 
-        st.dataframe(styled_df, use_container_width=True, hide_index=True)
+                st.dataframe(styled_df, use_container_width=True, hide_index=True)
             
         
 
