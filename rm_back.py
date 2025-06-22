@@ -5,9 +5,9 @@ from rembg import remove
 from PIL import Image
 
 # Paths
-DATA_DIR = ""
+DATA_DIR = "Data"
 OUTPUT_DIR = "Output"
-CLASSES = [ "pomegranates"]
+CLASSES = [ "banana"]
 
 def ensure_folder(path):
     if not os.path.exists(path):

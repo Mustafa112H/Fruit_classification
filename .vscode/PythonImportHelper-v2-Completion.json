@@ -523,7 +523,7 @@
         "kind": 5,
         "importPath": "rm_back",
         "description": "rm_back",
-        "peekOfCode": "DATA_DIR = \"\"\nOUTPUT_DIR = \"Output\"\nCLASSES = [ \"pomegranates\"]\ndef ensure_folder(path):\n    if not os.path.exists(path):\n        os.makedirs(path)\ndef remove_bg_and_save(image_path, output_path):\n    # Load BGR image, convert to RGB\n    image_bgr = cv2.imread(image_path)\n    if image_bgr is None:",
+        "peekOfCode": "DATA_DIR = \"Data\"\nOUTPUT_DIR = \"Output\"\nCLASSES = [ \"banana\"]\ndef ensure_folder(path):\n    if not os.path.exists(path):\n        os.makedirs(path)\ndef remove_bg_and_save(image_path, output_path):\n    # Load BGR image, convert to RGB\n    image_bgr = cv2.imread(image_path)\n    if image_bgr is None:",
         "detail": "rm_back",
         "documentation": {}
     },
@@ -532,7 +532,7 @@
         "kind": 5,
         "importPath": "rm_back",
         "description": "rm_back",
-        "peekOfCode": "OUTPUT_DIR = \"Output\"\nCLASSES = [ \"pomegranates\"]\ndef ensure_folder(path):\n    if not os.path.exists(path):\n        os.makedirs(path)\ndef remove_bg_and_save(image_path, output_path):\n    # Load BGR image, convert to RGB\n    image_bgr = cv2.imread(image_path)\n    if image_bgr is None:\n        print(f\"❌ Failed to load {image_path}\")",
+        "peekOfCode": "OUTPUT_DIR = \"Output\"\nCLASSES = [ \"banana\"]\ndef ensure_folder(path):\n    if not os.path.exists(path):\n        os.makedirs(path)\ndef remove_bg_and_save(image_path, output_path):\n    # Load BGR image, convert to RGB\n    image_bgr = cv2.imread(image_path)\n    if image_bgr is None:\n        print(f\"❌ Failed to load {image_path}\")",
         "detail": "rm_back",
         "documentation": {}
     },
@@ -541,7 +541,7 @@
         "kind": 5,
         "importPath": "rm_back",
         "description": "rm_back",
-        "peekOfCode": "CLASSES = [ \"pomegranates\"]\ndef ensure_folder(path):\n    if not os.path.exists(path):\n        os.makedirs(path)\ndef remove_bg_and_save(image_path, output_path):\n    # Load BGR image, convert to RGB\n    image_bgr = cv2.imread(image_path)\n    if image_bgr is None:\n        print(f\"❌ Failed to load {image_path}\")\n        return",
+        "peekOfCode": "CLASSES = [ \"banana\"]\ndef ensure_folder(path):\n    if not os.path.exists(path):\n        os.makedirs(path)\ndef remove_bg_and_save(image_path, output_path):\n    # Load BGR image, convert to RGB\n    image_bgr = cv2.imread(image_path)\n    if image_bgr is None:\n        print(f\"❌ Failed to load {image_path}\")\n        return",
         "detail": "rm_back",
         "documentation": {}
     },
