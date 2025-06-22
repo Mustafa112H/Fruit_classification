@@ -424,7 +424,7 @@
         "kind": 5,
         "importPath": "get_data",
         "description": "get_data",
-        "peekOfCode": "keyword = 'fresh promagrante'\nbing_crawler = BingImageCrawler(storage={'root_dir': 'pomegranates'})\nbing_crawler.crawl(keyword=keyword, max_num=300, file_idx_offset=1900)\ncrawler2 = GoogleImageCrawler(storage={'root_dir': 'pomegranates'})\ncrawler2.crawl(keyword=keyword, max_num=300, file_idx_offset=900)",
+        "peekOfCode": "keyword = 'banana no back'\nbing_crawler = BingImageCrawler(storage={'root_dir': 'Data/banana'})\nbing_crawler.crawl(keyword=keyword, max_num=300, file_idx_offset=1900)\ncrawler2 = GoogleImageCrawler(storage={'root_dir': 'Data/banana'})\ncrawler2.crawl(keyword=keyword, max_num=300, file_idx_offset=900)",
         "detail": "get_data",
         "documentation": {}
     },
@@ -433,7 +433,7 @@
         "kind": 5,
         "importPath": "get_data",
         "description": "get_data",
-        "peekOfCode": "bing_crawler = BingImageCrawler(storage={'root_dir': 'pomegranates'})\nbing_crawler.crawl(keyword=keyword, max_num=300, file_idx_offset=1900)\ncrawler2 = GoogleImageCrawler(storage={'root_dir': 'pomegranates'})\ncrawler2.crawl(keyword=keyword, max_num=300, file_idx_offset=900)",
+        "peekOfCode": "bing_crawler = BingImageCrawler(storage={'root_dir': 'Data/banana'})\nbing_crawler.crawl(keyword=keyword, max_num=300, file_idx_offset=1900)\ncrawler2 = GoogleImageCrawler(storage={'root_dir': 'Data/banana'})\ncrawler2.crawl(keyword=keyword, max_num=300, file_idx_offset=900)",
         "detail": "get_data",
         "documentation": {}
     },
@@ -442,7 +442,7 @@
         "kind": 5,
         "importPath": "get_data",
         "description": "get_data",
-        "peekOfCode": "crawler2 = GoogleImageCrawler(storage={'root_dir': 'pomegranates'})\ncrawler2.crawl(keyword=keyword, max_num=300, file_idx_offset=900)",
+        "peekOfCode": "crawler2 = GoogleImageCrawler(storage={'root_dir': 'Data/banana'})\ncrawler2.crawl(keyword=keyword, max_num=300, file_idx_offset=900)",
         "detail": "get_data",
         "documentation": {}
     },
