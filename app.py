@@ -1217,6 +1217,7 @@ def main():
                 df_preds = pd.DataFrame(prediction_results)
                 st.dataframe(df_preds, use_container_width=True)
         
+        st.session_state.experiment_completed = True
         st.markdown('<div class="section-header">📄 Classification Reports</div>', unsafe_allow_html=True)
 
         for model_key, (y_test, y_pred) in st.session_state.last_predictions.items():
