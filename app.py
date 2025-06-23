@@ -300,7 +300,7 @@ st.markdown("""
         border-radius: 20px;
         box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
         width: 100%;
-        max-width: 630px;
+        max-width: 680px;
         text-align: center;
         border: 1px solid rgba(255, 255, 255, 0.2);
     }
