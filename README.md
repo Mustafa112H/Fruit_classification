@@ -30,15 +30,9 @@ Background removal (rembg)
 Feature extraction
 Stratified 5-fold cross-validation
 🤖 Models
-Naive Bayes
-Fast, simple, low memory
-Weak for image data
-Decision Tree
-Interpretable
-May overfit
-Neural Network (MLP + CNN Features)
-Best performance
-Slower training
+Naive Bayes: Fast, simple, low memory + Weak for image data
+Decision Tree: Interpretable + May overfit
+Neural Network (MLP + CNN Features): Best performance + Slower training
 📈 Metrics
 Accuracy
 Precision
@@ -66,6 +60,3 @@ Scikit-learn
 TensorFlow / Keras
 OpenCV
 Streamlit
-👨‍💻 Authors
-Mohammad Omar
-Heba Mustafa
